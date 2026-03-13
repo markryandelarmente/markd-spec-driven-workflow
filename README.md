@@ -14,17 +14,33 @@ Clone this repo once, then run the installer from inside any project:
 cd ~/my-project
 
 sh ~/workflow/install.sh           # defaults to Claude Code
-sh ~/workflow/install.sh --claude  # Claude Code  (/write-spec, /analyze, ...)
-sh ~/workflow/install.sh --cursor  # Cursor        (@write-spec, @analyze, ...)
+sh ~/workflow/install.sh --claude  # Claude Code  (/markd:write-spec, /markd:analyze, ...)
+sh ~/workflow/install.sh --cursor  # Cursor        (@markd:write-spec, @markd:analyze, ...)
 ```
 
 The installer copies the command files and the `specs/` scaffolding into your project. It will not overwrite `specs/CONSTITUTION.md` if you have already edited it.
 
 ---
 
+## Update
+
+When you pull a newer version of this repo, run the updater to sync the command files in an existing project:
+
+```bash
+cd ~/my-project
+
+sh ~/workflow/update.sh            # defaults to Claude Code
+sh ~/workflow/update.sh --claude
+sh ~/workflow/update.sh --cursor
+```
+
+The updater only touches the command files and `WORKFLOW.md`. It will never modify your `specs/` folder, your specs, or your `CONSTITUTION.md`.
+
+---
+
 ## The 5 Commands
 
-> Claude Code: `/command-name` — Cursor: `@command-name`
+> Claude Code: `/markd:command-name` — Cursor: `@markd:command-name`
 
 ### `write-spec`
 **Start here.** Describe the feature or fix you want to build.
@@ -73,7 +89,7 @@ The AI will:
 - Ask targeted clarification questions one at a time (with recommended answers)
 - Update only the affected sections in `spec.md`
 - Add new tasks to `todos.md`, mark invalidated ones with strikethrough
-- Reset status to `in-progress` so `/implement` or `@implement` picks it up
+- Reset status to `in-progress` so `implement` picks it up
 
 ---
 
@@ -117,19 +133,26 @@ spec-driven-workflow-v2/      ← this repo (install source)
   specs/
     README.md
     CONSTITUTION.md           ← template project standards
-  install.sh
+  install.sh                  ← first-time install
+  update.sh                   ← update existing install
 
 your-project/                 ← after install
   specs/
     03-12-2026-feat-oauth-login/
       spec.md                 ← the spec (source of truth)
       todos.md                ← implementation checklist
-  .claude/commands/           ← created by --claude
+  .claude/commands/markd/     ← installed by --claude
     write-spec.md
-    ...
-  .cursor/commands/           ← created by --cursor
+    analyze.md
+    implement.md
+    iterate.md
+    code-review.md
+  .cursor/commands/markd/     ← installed by --cursor
     write-spec.md
-    ...
+    analyze.md
+    implement.md
+    iterate.md
+    code-review.md
   WORKFLOW.md                 ← copy of this README for reference
 ```
 
@@ -139,22 +162,22 @@ your-project/                 ← after install
 
 ```bash
 # 1. Describe the feature
-/write-spec  →  "Add OAuth login with Google"
+/markd:write-spec  →  "Add OAuth login with Google"
 
 # 2. AI asks questions one at a time, you answer, spec.md is created
 #    specs/03-12-2026-feat-oauth-login/spec.md  (status: backlog)
 
 # 3. Analyze the spec against the codebase
-/analyze  →  todos.md created, spec → in-progress
+/markd:analyze  →  todos.md created, spec → in-progress
 
 # 4. Implement
-/implement  →  branch created, todos checked off one by one
+/markd:implement  →  branch created, todos checked off one by one
 
 # 5. Request a change mid-flight
-/iterate  →  "Also support GitHub OAuth"
+/markd:iterate  →  "Also support GitHub OAuth"
 
 # 6. Review and commit
-/code-review  →  issues fixed, commit command provided
+/markd:code-review  →  issues fixed, commit command provided
 ```
 
 ---
