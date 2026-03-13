@@ -63,8 +63,18 @@ If the spec was `done`, reset it to `in-progress`.
 
 ## Step 4 — Update `todos.md`
 
-Add new todos for the changes. Place them in the correct group (Backend / Frontend / Tests / etc.).
+Add new todos for the changes.
 
+**If todos.md is phased** (`**Phases:**` > 1 or `## Phase N —` headers):
+- Place new tasks in the **correct phase** based on what they affect (e.g., a new list filter goes in Phase 1 if Phase 1 is List; a new create-field goes in Phase 2 if Phase 2 is Create)
+- If the change spans multiple phases or doesn't fit existing phases, add a new phase or split tasks across phases
+- Append new tasks to the appropriate phase's Backend / Frontend / Tests subsection
+- If a phase is partially complete (some `[x]`, some `[ ]`), append new tasks there; `/implement` will pick them up when resumed
+
+**If todos.md is flat:**
+- Place them in the correct group (Backend / Frontend / Tests / Infrastructure)
+
+**For both:**
 Mark any existing todos that are now **invalidated** with a strikethrough note:
 ```
 - [x] ~~Create X~~ — superseded by iteration: replaced with Y

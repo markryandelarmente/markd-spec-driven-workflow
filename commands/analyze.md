@@ -79,6 +79,26 @@ Scan the relevant parts of the codebase to answer:
 
 ---
 
+## Step 5b — Assess Complexity
+
+Before generating todos, assess the implementation complexity of the spec:
+
+| Complexity | Criteria | Behavior |
+|------------|----------|----------|
+| **Simple** | Single focus, few ACs (e.g., "add a button", "fix typo"), 1–2 affected areas | No phases; flat todos like today |
+| **Moderate** | 2–3 distinct flows, several ACs (e.g., "list + create for one entity") | Optional: 1–2 phases |
+| **Complex** | Full CRUD, multiple entities, many ACs (6+), multiple UI flows | **Phased** — group into deliverable phases |
+
+**Heuristics for "complex":**
+- Full CRUD patterns (List + Create + Edit + Delete)
+- Multiple distinct screens or flows
+- 6+ acceptance criteria
+- Many affected areas (5+ files/modules)
+
+Store your assessment; it will be written into `todos.md` and determines the todo structure (flat vs phased).
+
+---
+
 ## Step 5 — Ask Clarifications (if needed, one at a time)
 
 If you found gaps, contradictions, or risky assumptions, ask the user before generating todos.
@@ -106,14 +126,18 @@ Wait for the user to reply before asking the next question. Once all clarificati
 
 ## Step 6 — Generate `todos.md`
 
-Create `specs/[folder]/todos.md` with this structure:
+Create `specs/[folder]/todos.md`. The structure depends on the complexity assessed in Step 5b.
+
+**For Simple or Moderate (flat structure):**
 
 ```markdown
 # Implementation Todos — [Feature Name]
 
 **Spec:** [folder name]  
 **Generated:** YYYY-MM-DD  
-**Status:** in-progress
+**Status:** in-progress  
+**Complexity:** simple | moderate  
+**Phases:** 1
 
 ---
 
@@ -176,14 +200,94 @@ Create `specs/[folder]/todos.md` with this structure:
 - [ ] Code review done (`/code-review`)
 ```
 
+**For Complex (phased structure):**
+
+```markdown
+# Implementation Todos — [Feature Name]
+
+**Spec:** [folder name]  
+**Generated:** YYYY-MM-DD  
+**Status:** in-progress  
+**Complexity:** complex  
+**Phases:** [N]
+
+---
+
+## Phase 1 — [Name, e.g., List]
+> Deliverable: [what this phase delivers]. Commit after this phase.
+
+### Backend
+- [ ] [Task]
+- [ ] [Task]
+
+### Frontend
+- [ ] [Task]
+
+### Tests
+- [ ] [Task]
+
+---
+
+## Phase 2 — [Name, e.g., Create]
+> Deliverable: [what this phase delivers].
+
+### Backend
+- [ ] [Task]
+
+### Frontend
+- [ ] [Task]
+
+### Tests
+- [ ] [Task]
+
+---
+
+## Phase 3 — [Edit] / Phase 4 — [Delete] / ... (as needed)
+
+---
+
+## ⚠️ Risk Areas
+- [File or area]: [what could break and why]
+
+---
+
+## 📋 Constitution Standards Applied
+> Standards from `specs/CONSTITUTION.md` relevant to this feature
+
+- [ ] [Standard]
+- [ ] [Standard]
+
+---
+
+## Acceptance Criteria Coverage
+
+| Criterion | Covered by |
+|-----------|------------|
+| AC1 — [criterion text] | Phase 1 > [task] |
+| AC2 — [criterion text] | Phase 2 > [task] |
+
+---
+
+## Completion Checklist
+
+- [ ] All todos above checked off
+- [ ] All acceptance criteria covered (see table above)
+- [ ] `lint` passes with zero errors
+- [ ] `build` passes
+- [ ] `test` passes
+- [ ] Manual test steps from spec verified
+- [ ] Code review done (`/code-review`)
+```
+
 **Todo writing rules:**
 - Each todo must be **specific and actionable** — not "implement auth" but "create `POST /api/auth/login` endpoint in `app/api/auth/route.ts`"
-- Each group must include a `> Covers: ACN` note linking it to one or more acceptance criteria from the spec
+- Each group must include a `> Covers: ACN` note (flat) or map to phases in the Acceptance Criteria table (phased)
 - The Acceptance Criteria Coverage table must account for every criterion in the spec — no criterion left uncovered
 - Group by area: Backend, Frontend, Tests, Infrastructure
 - Order tasks so dependencies come first (e.g., DB migration before API, API before UI)
 - Flag any high-risk tasks with ⚠️
 - **Constitution Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards)
+- **For phased specs:** Each phase must be a deliverable unit (e.g., List = API + UI + tests for listing; Create = form + API + tests). Add `> Deliverable: [description]. Commit after this phase.` to Phase 1; subsequent phases get `> Deliverable: [description].` Phases are implemented one at a time — the dev commits after each phase before continuing
 
 ---
 
@@ -209,6 +313,8 @@ Todo breakdown:
   - Frontend: X tasks
   - Tests: X tasks
   - Infrastructure: X tasks
+  [If phased: Phases: X (Phase 1: [name], Phase 2: [name], ...)]
 
 Next step: run /implement to start building.
+[If phased: Implementation will run one phase at a time — you'll commit after each phase, then re-run /implement for the next.]
 ```

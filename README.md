@@ -60,11 +60,12 @@ Call this again on an existing spec to revise it — only changed sections are u
 
 The AI will:
 - Validate the spec is complete enough to act on
+- Assess complexity (simple, moderate, complex) and group tasks by phase when the spec is large enough
 - Set spec status to `in-progress`
 - Identify files to create and modify
 - Flag any areas at risk of breaking
 - Ask clarifications if the spec has gaps
-- Generate `specs/[folder]/todos.md` — an ordered, grouped checklist
+- Generate `specs/[folder]/todos.md` — an ordered, grouped checklist (phased for complex specs)
 
 ---
 
@@ -78,7 +79,9 @@ The AI will:
 - Run lint → build → test and fix all failures before finishing
 - Set spec status to `done` when all todos are complete
 
-Safe to re-run — resumes from the first unchecked todo if the branch already exists.
+**For phased specs:** Implements one phase at a time. After each phase, you manually verify, commit, then run `/implement` again for the next phase.
+
+Safe to re-run — resumes from the first unchecked todo (or first incomplete phase) if the branch already exists.
 
 ---
 
@@ -102,6 +105,22 @@ The AI will:
 - Output a report: ✅ looks good / ⚠️ suggestions / ❌ must fix
 - Fix any blockers before approving
 - Provide the exact `git commit` command when ready
+
+---
+
+## Phased Implementation
+
+For complex specs (e.g., full CRUD with list, create, edit, delete), `/analyze` assesses size and complexity and groups tasks into phases. Each phase is a deliverable unit (e.g., Phase 1: list page + API + tests).
+
+**Flow for phased specs:**
+1. `/analyze` — generates phased `todos.md` (Phase 1, Phase 2, ...)
+2. `/implement` — implements Phase 1 only, runs lint/build/test, then stops
+3. You manually verify the deliverable works
+4. You commit your changes
+5. Run `/implement` again — it implements Phase 2, stops, repeat
+6. When all phases are done, spec is marked `done`; run `/code-review` before final commit
+
+Simple specs (single focus, few tasks) use a flat structure and `/implement` completes everything in one run.
 
 ---
 

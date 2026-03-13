@@ -10,6 +10,8 @@ If multiple in-progress specs exist, list them and ask the user which to impleme
 
 Read both files fully before writing a single line of code.
 
+**Detect phased todos:** If `todos.md` contains `**Phases:**` with a value > 1, or contains `## Phase N —` headers, treat it as phased. Otherwise, treat it as flat (implement all todos in one run).
+
 ---
 
 ## Step 2 — Rollback Safety & Branch Setup
@@ -22,15 +24,17 @@ git branch --list feature/[name]
 git branch --list fix/[name]
 ```
 
-**If the branch already exists** — this is a resumed session (e.g. after an `/iterate` or an interrupted run):
+**If the branch already exists** — this is a resumed session (e.g. after an `/iterate`, an interrupted run, or between phases):
 - Switch to it: `git checkout feature/[name]`
 - Read `todos.md` and identify which items are already checked `[x]` — those are done
-- Continue from the first unchecked `[ ]` item
+- **If phased:** Find the first phase that has any unchecked `[ ]` item. Work only on that phase.
+- **If flat:** Continue from the first unchecked `[ ]` item.
 - Do NOT reset, re-create, or redo any completed work
 - Inform the user:
   ```
   ↩️  Resuming existing branch: feature/[name]
   Completed: X/Y todos already done — picking up from "[next todo]"
+  [If phased: "Working on Phase N only."]
   ```
 
 **If the branch does not exist** — this is a fresh start:
@@ -67,7 +71,9 @@ Then revert `spec.md` status back to `backlog` and advise the user to address th
 
 ## Step 3 — Implement
 
-Work through `todos.md` **in order**, top to bottom, respecting the dependency sequence.
+**If phased:** Work only on the **first incomplete phase**. A phase is the content from `## Phase N — [Name]` through the next `## Phase` or `## ⚠️ Risk Areas` (whichever comes first). A phase is incomplete if any todo within it is unchecked. Do not work on tasks in later phases until the current phase is done and the user has committed.
+
+**If flat:** Work through `todos.md` **in order**, top to bottom, respecting the dependency sequence.
 
 ### Rules
 - Implement **exactly what the spec describes** — nothing more, nothing less
@@ -85,7 +91,9 @@ Update `todos.md` — mark the item as checked:
 
 Do this after **each individual task**, not in bulk at the end.
 
-### After all todos are checked off
+### After all todos in scope are checked off
+
+**Phased:** "In scope" = the current phase only. **Flat:** "In scope" = all todos.
 
 **Detect the package manager first:**
 
@@ -126,11 +134,35 @@ pnpm test / yarn test / npm run test
 
 If any gate fails, fix it and re-run that gate before moving on to the next.
 
+**If phased and more phases remain** (other phases still have unchecked `[ ]` items):
+- Do NOT update status to complete or done
+- Do NOT proceed to Step 4
+- Output instead:
+  ```
+  ✅ Phase [N] complete
+
+  Branch: feature/[name]
+  Phase [N] todos: X/X checked
+
+  Gates passed:
+    ✅ Lint   — zero errors
+    ✅ Build  — no compile errors
+    ✅ Tests  — X/X passing
+
+  Next steps:
+    1. Manually verify the deliverable for this phase works
+    2. Commit your changes: git add ... && git commit -m "..."
+    3. Run /implement again to start Phase [N+1]
+  ```
+- Stop. The user will commit and re-run `/implement` for the next phase.
+
+**If flat, or phased with all phases done:** Proceed to Step 4.
+
 ---
 
 ## Step 4 — Completion
 
-When all items in `todos.md` are checked:
+When all items in `todos.md` are checked (flat) or all phases are complete (phased):
 
 1. Update `todos.md` status:
    ```
