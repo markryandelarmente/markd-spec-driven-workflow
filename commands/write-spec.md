@@ -34,7 +34,7 @@ Internally identify all the clarifications needed, covering:
 
 **Do NOT list all questions at once.** Ask them one at a time in a conversational way.
 
-For each question, use this format:
+For each question, use this format. **You MUST mark exactly one option as recommended** (append `← recommended — [short reason]` to that line):
 
 ---
 **[Short topic label]**
