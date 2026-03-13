@@ -38,7 +38,7 @@ The updater only touches the command files and `WORKFLOW.md`. It will never modi
 
 ---
 
-## The 5 Commands
+## The 6 Commands
 
 > Claude Code: `/markd:command-name` — Cursor: `@markd:command-name`
 
@@ -106,6 +106,20 @@ The AI will:
 - Fix any blockers before approving
 - Provide the exact `git commit` command when ready
 
+**For phased specs:** Run `/code-review` after each phase commit. Say "phase only" or "review last commit" to scope the review to the most recent commit.
+
+---
+
+### `rollback`
+**Abort implementation.** Restore the working tree to the state before `/implement` started.
+
+The AI will:
+- Find the in-progress spec and its `todos.md`
+- Look for the rollback SHA (recorded when `/implement` created a fresh branch)
+- Output the exact `git reset --hard [SHA]` command to run
+
+Use this when you hit a critical blocker and need to discard all implementation work and start over. The rollback SHA is stored in a comment at the top of `todos.md`.
+
 ---
 
 ## Phased Implementation
@@ -117,8 +131,9 @@ For complex specs (e.g., full CRUD with list, create, edit, delete), `/analyze` 
 2. `/implement` — implements Phase 1 only, runs lint/build/test, then stops
 3. You manually verify the deliverable works
 4. You commit your changes
-5. Run `/implement` again — it implements Phase 2, stops, repeat
-6. When all phases are done, spec is marked `done`; run `/code-review` before final commit
+5. Optional: run `/code-review` with "phase only" to review just that phase
+6. Run `/implement` again — it implements Phase 2, stops, repeat
+7. When all phases are done, spec is marked `done`; run `/code-review` before final commit
 
 Simple specs (single focus, few tasks) use a flat structure and `/implement` completes everything in one run.
 
@@ -149,6 +164,7 @@ spec-driven-workflow-v2/      ← this repo (install source)
     implement.md
     iterate.md
     code-review.md
+    rollback.md
   specs/
     README.md
     CONSTITUTION.md           ← template project standards
@@ -166,12 +182,14 @@ your-project/                 ← after install
     implement.md
     iterate.md
     code-review.md
+    rollback.md
   .cursor/commands/markd/     ← installed by --cursor
     write-spec.md
     analyze.md
     implement.md
     iterate.md
     code-review.md
+    rollback.md
   WORKFLOW.md                 ← copy of this README for reference
 ```
 

@@ -60,7 +60,7 @@ git branch --list fix/[name]
 
 ### If you need to abort mid-implementation
 
-If a critical blocker is hit and the user wants to abandon the current implementation:
+If a critical blocker is hit and the user wants to abandon the current implementation, they can run `/rollback` to get the exact `git reset` command (if a rollback SHA was recorded when the branch was created). Alternatively:
 ```bash
 git checkout main
 git branch -D feature/[name]

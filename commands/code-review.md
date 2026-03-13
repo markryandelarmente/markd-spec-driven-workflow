@@ -8,6 +8,8 @@ Find the most recently active spec in `specs/` (status: `done` or `in-progress` 
 
 Read `spec.md` and `todos.md` fully.
 
+**Detect phased specs:** If `todos.md` has `**Phases:**` > 1 or contains `## Phase N —` headers, this is a phased spec. You can run `/code-review` after each phase commit for incremental review, not just at the end.
+
 ---
 
 ## Step 2 — Set Status to In-Review
@@ -21,12 +23,24 @@ In `spec.md`, update:
 
 ## Step 3 — Gather All Changed Files
 
+**Scope:** Choose based on user intent:
+
+- **Default (full branch review):** All changes on the branch since `main`. Use when doing final review before merge, or cumulative review of all phases so far.
+- **Phase only / last commit:** If the user asks to review only the last commit (e.g., "phase only", "review last commit", "just the phase I committed"), scope to the most recent commit. Use when reviewing a single phase immediately after committing it.
+
+**For full branch review:**
 ```bash
 git diff --name-only main...HEAD
 git diff --name-only --cached
 ```
 
-List every changed file. For each one, read its full diff.
+**For phase-only (last commit) review:**
+```bash
+git diff --name-only HEAD~1..HEAD
+git show --name-only HEAD
+```
+
+List every changed file. For each one, read its full diff. If phase-only, note in the report: "Reviewing Phase N only (last commit)."
 
 ---
 
@@ -81,6 +95,7 @@ Format the report exactly like this:
   CODE REVIEW — [Feature Name]
   Branch: feature/[name]
   Files reviewed: X
+  [If phased spec: Phased (N phases) — reviewing [full branch | Phase N only (last commit)]]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✅ LOOKS GOOD
@@ -125,6 +140,8 @@ Format the report exactly like this:
      git push origin feature/[name]
 
    Then open a PR if working with a team.
+
+   [If phased spec and not all phases done: For phased specs, you can run /code-review after each phase commit. Say "phase only" to review just the last commit before merging that phase.]
 
    Commit message types:
      feat:     new feature

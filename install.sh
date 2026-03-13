@@ -101,7 +101,7 @@ fi
 # Commands
 echo -e "${BLUE}→ Installing $TOOL_LABEL commands...${NC}"
 mkdir -p "$COMMANDS_DEST"
-for cmd in write-spec analyze implement iterate code-review; do
+for cmd in write-spec analyze implement iterate code-review rollback; do
   cp "$WORKFLOW_DIR/commands/$cmd.md" "$COMMANDS_DEST/$cmd.md"
   echo "    ✓ ${CMD_PREFIX}${cmd}"
 done
@@ -114,13 +114,14 @@ echo "    ✓ WORKFLOW.md"
 echo ""
 echo -e "${GREEN}${BOLD}✓ $TOOL_LABEL installation complete!${NC}"
 echo ""
-echo -e "${YELLOW}Your 5 commands:${NC}"
+echo -e "${YELLOW}Your 6 commands:${NC}"
 echo ""
 echo "  ${CMD_PREFIX}markd:write-spec    → Start here. Describe a feature or fix."
 echo "  ${CMD_PREFIX}markd:analyze       → Analyze the spec, generate a todo list."
 echo "  ${CMD_PREFIX}markd:implement     → Build it. Todos get checked off as you go."
 echo "  ${CMD_PREFIX}markd:iterate       → Request changes to an in-progress spec."
 echo "  ${CMD_PREFIX}markd:code-review   → Review all changes before committing."
+echo "  ${CMD_PREFIX}markd:rollback      → Abort implementation; restore to pre-implement state."
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Edit   specs/CONSTITUTION.md   with your project standards"
