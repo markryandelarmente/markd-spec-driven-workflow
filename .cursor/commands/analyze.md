@@ -91,12 +91,10 @@ If you found gaps, contradictions, or risky assumptions, ask the user before gen
 [Question clearly stated]
 
 - A) Option
-- B) Option
+- B) Option ← recommended — [short reason]
 - C) Option
 
-⭐ Recommended: **B** — [reason why]
-
-> Reply with A, B, C — or type your own answer. Press Enter to go with the recommendation.
+> Type A, B, C or your own answer.
 
 ---
 

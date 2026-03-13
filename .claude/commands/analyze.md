@@ -85,12 +85,13 @@ Scan the relevant parts of the codebase to answer:
 
 If you found gaps, contradictions, or risky assumptions, ask the user before generating todos.
 
-Format each question with multiple choice options and a **✅ Recommended** answer:
+Format each question with multiple choice options. Mark the recommended answer inline:
 
 ```
 Q1. [Question]
-  A) Option  ✅ Recommended — [reason]
-  B) Option
+  A) Option
+  B) Option ← recommended — [reason]
+  C) Option
 ```
 
 Wait for answers before proceeding.
