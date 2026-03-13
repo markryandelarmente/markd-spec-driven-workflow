@@ -1,13 +1,15 @@
 #!/bin/bash
 
-# Spec-Driven AI Development Workflow — Claude Code Installer
+# Spec-Driven AI Development Workflow — Installer
 #
 # SETUP (once, anywhere on your machine):
 #   git clone https://github.com/yourname/spec-driven-workflow ~/workflow
 #
 # USAGE (run from inside your project folder):
 #   cd ~/my-project
-#   sh ~/workflow/install-claude.sh
+#   sh ~/workflow/install.sh            # defaults to --claude
+#   sh ~/workflow/install.sh --claude
+#   sh ~/workflow/install.sh --cursor
 
 set -e
 
@@ -21,9 +23,37 @@ NC='\033[0m'
 WORKFLOW_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="$(pwd)"
 
+# Parse argument — default to claude
+TOOL="claude"
+for arg in "$@"; do
+  case "$arg" in
+    --claude) TOOL="claude" ;;
+    --cursor) TOOL="cursor" ;;
+    *)
+      echo -e "${RED}✗ Unknown option: $arg${NC}"
+      echo ""
+      echo "  Usage: sh install.sh [--claude|--cursor]"
+      echo ""
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$TOOL" = "cursor" ]; then
+  TOOL_LABEL="Cursor"
+  COMMANDS_DEST="$TARGET_DIR/.cursor/commands"
+  CMD_PREFIX="@"
+  NEXT_STEP_HINT="Open Cursor Agent chat and run  @write-spec  to create your first spec"
+else
+  TOOL_LABEL="Claude Code"
+  COMMANDS_DEST="$TARGET_DIR/.claude/commands"
+  CMD_PREFIX="/"
+  NEXT_STEP_HINT="Open Claude Code and run  /write-spec  to create your first spec"
+fi
+
 echo -e "${BLUE}"
 echo "  ╔══════════════════════════════════════════════╗"
-echo "  ║   Spec-Driven Workflow — Claude Code        ║"
+printf "  ║   Spec-Driven Workflow — %-19s║\n" "$TOOL_LABEL"
 echo "  ╚══════════════════════════════════════════════╝"
 echo -e "${NC}"
 
@@ -33,7 +63,7 @@ if [ "$TARGET_DIR" = "$WORKFLOW_DIR" ]; then
   echo ""
   echo "  Run this from your project root instead:"
   echo "    cd ~/my-project"
-  echo "    sh $WORKFLOW_DIR/install-claude.sh"
+  echo "    sh $WORKFLOW_DIR/install.sh --$TOOL"
   echo ""
   exit 1
 fi
@@ -48,6 +78,7 @@ if [ ! -d "$TARGET_DIR/.git" ]; then
   fi
 fi
 
+echo -e "  ${BOLD}Tool:${NC}            $TOOL_LABEL"
 echo -e "  ${BOLD}Workflow source:${NC} $WORKFLOW_DIR"
 echo -e "  ${BOLD}Installing into:${NC} $TARGET_DIR"
 echo ""
@@ -67,33 +98,33 @@ else
   echo "    ✓ specs/CONSTITUTION.md"
 fi
 
-# Claude Code commands
-echo -e "${BLUE}→ Installing Claude Code commands (.claude/commands/)...${NC}"
-mkdir -p "$TARGET_DIR/.claude/commands"
+# Commands
+echo -e "${BLUE}→ Installing $TOOL_LABEL commands...${NC}"
+mkdir -p "$COMMANDS_DEST"
 for cmd in write-spec analyze implement iterate code-review; do
-  cp "$WORKFLOW_DIR/.claude/commands/$cmd.md" "$TARGET_DIR/.claude/commands/$cmd.md"
-  echo "    ✓ /$cmd"
+  cp "$WORKFLOW_DIR/commands/$cmd.md" "$COMMANDS_DEST/$cmd.md"
+  echo "    ✓ ${CMD_PREFIX}${cmd}"
 done
 
 # WORKFLOW.md
-cp "$WORKFLOW_DIR/README.md" "$TARGET_DIR/WORKFLOW.md"
 echo -e "${BLUE}→ Installing WORKFLOW.md reference...${NC}"
+cp "$WORKFLOW_DIR/README.md" "$TARGET_DIR/WORKFLOW.md"
 echo "    ✓ WORKFLOW.md"
 
 echo ""
-echo -e "${GREEN}${BOLD}✓ Claude Code installation complete!${NC}"
+echo -e "${GREEN}${BOLD}✓ $TOOL_LABEL installation complete!${NC}"
 echo ""
-echo -e "${YELLOW}Your 5 commands — type these in Claude Code chat:${NC}"
+echo -e "${YELLOW}Your 5 commands:${NC}"
 echo ""
-echo "  /write-spec    → Start here. Describe a feature or fix."
-echo "  /analyze       → Analyze the spec, generate a todo list."
-echo "  /implement     → Build it. Todos get checked off as you go."
-echo "  /iterate       → Request changes to an in-progress spec."
-echo "  /code-review   → Review all changes before committing."
+echo "  ${CMD_PREFIX}write-spec    → Start here. Describe a feature or fix."
+echo "  ${CMD_PREFIX}analyze       → Analyze the spec, generate a todo list."
+echo "  ${CMD_PREFIX}implement     → Build it. Todos get checked off as you go."
+echo "  ${CMD_PREFIX}iterate       → Request changes to an in-progress spec."
+echo "  ${CMD_PREFIX}code-review   → Review all changes before committing."
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Edit   specs/CONSTITUTION.md   with your project standards"
-echo "  2. Open Claude Code and run  /write-spec  to create your first spec"
+echo "  2. $NEXT_STEP_HINT"
 echo ""
 echo -e "${YELLOW}Spec status lifecycle:${NC} backlog → in-progress → in-review → done"
 echo ""

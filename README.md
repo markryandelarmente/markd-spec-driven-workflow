@@ -2,46 +2,48 @@
 
 A structured workflow for building features with AI assistance. Every feature starts with a spec, every commit is reviewed. No code before the plan is clear.
 
+Supports **Claude Code** and **Cursor**.
+
 ---
 
 ## Install
 
+Clone this repo once, then run the installer from inside any project:
+
 ```bash
-bash install.sh /path/to/your/project
+cd ~/my-project
+
+sh ~/workflow/install.sh           # defaults to Claude Code
+sh ~/workflow/install.sh --claude  # Claude Code  (/write-spec, /analyze, ...)
+sh ~/workflow/install.sh --cursor  # Cursor        (@write-spec, @analyze, ...)
 ```
 
-Or copy these folders into any project root:
-```
-specs/                          ← all specs live here
-.claude/commands/
-  write-spec.md                 ← /write-spec
-  analyze.md                    ← /analyze
-  implement.md                  ← /implement
-  iterate.md                    ← /iterate
-  code-review.md                ← /code-review
-```
+The installer copies the command files and the `specs/` scaffolding into your project. It will not overwrite `specs/CONSTITUTION.md` if you have already edited it.
 
 ---
 
 ## The 5 Commands
 
-### `/write-spec`
-**Start here.** Tell Claude what you want to build.
+> Claude Code: `/command-name` — Cursor: `@command-name`
 
-Claude will:
-- Ask structured clarification questions (with recommended answers)
+### `write-spec`
+**Start here.** Describe the feature or fix you want to build.
+
+The AI will:
+- Ask structured clarification questions one at a time (with recommended answers)
 - Cover scope, auth, error states, data changes, and edge cases
 - Create `specs/MM-DD-YYYY-[type]-[name]/spec.md`
 - Set status to `backlog`
 
-Call this again on an existing spec to update it (only changed sections are updated).
+Call this again on an existing spec to revise it — only changed sections are updated.
 
 ---
 
-### `/analyze`
-**Plan the work.** Claude analyzes the spec against the real codebase.
+### `analyze`
+**Plan the work.** The AI analyzes the spec against your real codebase.
 
-Claude will:
+The AI will:
+- Validate the spec is complete enough to act on
 - Set spec status to `in-progress`
 - Identify files to create and modify
 - Flag any areas at risk of breaking
@@ -50,32 +52,35 @@ Claude will:
 
 ---
 
-### `/implement`
-**Build it.** Claude works through `todos.md` top to bottom.
+### `implement`
+**Build it.** The AI works through `todos.md` top to bottom.
 
-Claude will:
+The AI will:
 - Create the git branch (`feature/[name]` or `fix/[name]`)
 - Implement each task in dependency order
-- Check off each `todos.md` item as it's completed (live updates)
+- Check off each `todos.md` item immediately upon completion
+- Run lint → build → test and fix all failures before finishing
 - Set spec status to `done` when all todos are complete
 
+Safe to re-run — resumes from the first unchecked todo if the branch already exists.
+
 ---
 
-### `/iterate`
+### `iterate`
 **Request changes.** Describe what needs to change.
 
-Claude will:
-- Ask targeted clarification questions (with recommended answers)
+The AI will:
+- Ask targeted clarification questions one at a time (with recommended answers)
 - Update only the affected sections in `spec.md`
-- Add new tasks to `todos.md`, mark invalidated ones
-- Reset status to `in-progress` so `/implement` picks it up
+- Add new tasks to `todos.md`, mark invalidated ones with strikethrough
+- Reset status to `in-progress` so `/implement` or `@implement` picks it up
 
 ---
 
-### `/code-review`
+### `code-review`
 **Review before commit.** Full review across 6 dimensions.
 
-Claude will:
+The AI will:
 - Set spec status to `in-review`
 - Review all changed files for: spec compliance, correctness, code quality, security, performance, and test coverage
 - Output a report: ✅ looks good / ⚠️ suggestions / ❌ must fix
@@ -92,30 +97,40 @@ backlog → in-progress → in-review → done
 
 | Status | Set by | Meaning |
 |--------|--------|---------|
-| `backlog` | `/write-spec` | Spec written, not yet analyzed |
-| `in-progress` | `/analyze` | Analyzed, ready to implement |
-| `in-review` | `/code-review` | Implementation done, under review |
-| `done` | `/code-review` | Reviewed, committed |
+| `backlog` | `write-spec` | Spec written, not yet analyzed |
+| `in-progress` | `analyze` | Analyzed, ready to implement |
+| `in-review` | `code-review` | Implementation done, under review |
+| `done` | `code-review` | Reviewed, committed |
 
 ---
 
 ## Folder Structure
 
 ```
-specs/
-  03-12-2026-feat-implement-auth/
-    spec.md       ← the spec (source of truth)
-    todos.md      ← implementation checklist
-  03-15-2026-fix-login-redirect/
-    spec.md
-    todos.md
-.claude/
+spec-driven-workflow-v2/      ← this repo (install source)
   commands/
-    write-spec.md
+    write-spec.md             ← single source for all commands
     analyze.md
     implement.md
     iterate.md
     code-review.md
+  specs/
+    README.md
+    CONSTITUTION.md           ← template project standards
+  install.sh
+
+your-project/                 ← after install
+  specs/
+    03-12-2026-feat-oauth-login/
+      spec.md                 ← the spec (source of truth)
+      todos.md                ← implementation checklist
+  .claude/commands/           ← created by --claude
+    write-spec.md
+    ...
+  .cursor/commands/           ← created by --cursor
+    write-spec.md
+    ...
+  WORKFLOW.md                 ← copy of this README for reference
 ```
 
 ---
@@ -123,19 +138,19 @@ specs/
 ## Example Session
 
 ```bash
-# 1. Describe the feature in Claude
+# 1. Describe the feature
 /write-spec  →  "Add OAuth login with Google"
 
-# 2. Claude asks questions, you answer, spec.md is created
+# 2. AI asks questions one at a time, you answer, spec.md is created
 #    specs/03-12-2026-feat-oauth-login/spec.md  (status: backlog)
 
-# 3. Analyze
+# 3. Analyze the spec against the codebase
 /analyze  →  todos.md created, spec → in-progress
 
 # 4. Implement
 /implement  →  branch created, todos checked off one by one
 
-# 5. Test manually, fix issues
+# 5. Request a change mid-flight
 /iterate  →  "Also support GitHub OAuth"
 
 # 6. Review and commit
@@ -144,6 +159,14 @@ specs/
 
 ---
 
+## CONSTITUTION.md
+
+`specs/CONSTITUTION.md` is your project's standards file. The `analyze` command reads it before generating todos and applies only the relevant standards to each feature (e.g. API standards for backend work, accessibility standards for UI work).
+
+Edit it to match your actual project conventions — it ships with opinionated defaults covering code style, TypeScript, architecture, API design, testing, git, security, and accessibility.
+
+---
+
 ## Stack Compatibility
 
-Stack-agnostic by default. The commands assume `npm run build` and `npm run test`. To use a different stack, update `.claude/commands/implement.md` and `.claude/commands/code-review.md` with your test runner.
+Stack-agnostic by default. The `implement` command auto-detects your package manager (`pnpm` > `yarn` > `npm`) and reads `package.json` scripts to find the correct lint, build, and test commands.

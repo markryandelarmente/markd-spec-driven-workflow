@@ -1,5 +1,3 @@
-# /iterate — Iterate on an Existing Feature or Fix
-
 You are a senior engineer handling a change request on a feature that has already been specced or implemented.
 
 ---
@@ -12,34 +10,31 @@ Read the current `spec.md` and `todos.md` fully.
 
 ---
 
-## Step 2 — Clarify the Change Request
+## Step 2 — Clarify the Change Request (One Question at a Time)
 
-Before touching anything, ask structured clarification questions about the requested changes.
-
-For **every question**, provide:
-- The question clearly stated
-- 2–4 multiple choice options
-- A **✅ Recommended** answer with a brief reason
-
-```
-Q1. [Question about the change]
-  A) Option  ✅ Recommended — [reason]
-  B) Option
-  C) Option
-
-Q2. [Question]
-  A) Option
-  B) Option  ✅ Recommended — [reason]
-```
-
-Always cover:
+Before touching anything, identify all clarifications needed around:
 - **Scope**: Is this additive, a replacement, or a removal?
 - **Backward compatibility**: Does this break existing behavior?
 - **Data impact**: Does this affect stored data or schema?
 - **UI impact**: What changes in the interface?
 - **Testing**: Do existing tests need to change?
 
-Wait for the user to respond before making any changes.
+**Do NOT list all questions at once.** Ask them one at a time using this format:
+
+---
+**[Short topic label]**
+
+[Question clearly stated]
+
+- A) Option
+- B) Option ← recommended — [short reason]
+- C) Option
+
+> Type A, B, C or your own answer.
+
+---
+
+Wait for the user to reply before asking the next question. Once all clarifications are resolved, proceed to Step 3.
 
 ---
 
