@@ -4,13 +4,21 @@ You are a senior engineer performing a thorough technical analysis of a spec bef
 
 ## Step 1 — Load Project Context
 
-**Read `specs/CONSTITUTION.md`** — this file defines all project standards that must be followed.
+**Load project rules** from agent-specific locations (Cursor, Claude Code, OpenCode). Check in order, load all that exist:
 
-If the file does not exist, warn the user:
+1. **`.cursor/rules/*.mdc`** — For each file: strip YAML frontmatter (between `---` markers), use the markdown body as rule content
+2. **`.cursor/rules/*.md`** — If any .md files exist, read as-is
+3. **`.claude/rules/*`** — Read all files (security.md, coding-style.md, testing.md, etc.)
+4. **`AGENTS.md`** (project root) — Project instructions (Cursor, OpenCode)
+5. **`CLAUDE.md`** (project root) or **`.claude/CLAUDE.md`** — Claude Code
+6. **`.cursorrules`** (project root) — Legacy Cursor format
+
+Combine all found content. The combined rules are the project standards for this analysis.
+
+**If NO rules are found**, warn:
 ```
-⚠️  specs/CONSTITUTION.md not found.
-Standards will not be applied to this feature.
-Consider creating it to enforce consistent project standards across all features.
+⚠️  No project rules found. Checked: .cursor/rules/, .claude/rules/, AGENTS.md, CLAUDE.md, .cursorrules
+Standards will not be applied. Consider adding rules (e.g., AGENTS.md or .cursor/rules/) for consistent AI guidance.
 ```
 
 Then find the target spec. Look inside the `specs/` folder for the **most recently created** spec folder whose `spec.md` has `Status: backlog`.
@@ -18,7 +26,7 @@ Then find the target spec. Look inside the `specs/` folder for the **most recent
 If multiple backlog specs exist, list them and ask the user which one to analyze.
 
 Read:
-- `specs/CONSTITUTION.md` — project standards (already loaded above)
+- Project rules (already loaded above)
 - `specs/[folder]/spec.md` — the feature spec
 
 ---
@@ -146,10 +154,10 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 ---
 
-## 📋 Constitution Standards Applied
-> Standards from `specs/CONSTITUTION.md` relevant to this feature
+## 📋 Standards Applied
+> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md) relevant to this feature
 
-- [ ] [Standard from constitution that applies — e.g., "All API routes validate and sanitize input"]
+- [ ] [Standard from project rules that applies — e.g., "All API routes validate and sanitize input"]
 - [ ] [Standard — e.g., "No `any` types — use `unknown` and narrow"]
 - [ ] [Only list standards that are directly relevant to what is being built]
 
@@ -251,8 +259,8 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 ---
 
-## 📋 Constitution Standards Applied
-> Standards from `specs/CONSTITUTION.md` relevant to this feature
+## 📋 Standards Applied
+> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md) relevant to this feature
 
 - [ ] [Standard]
 - [ ] [Standard]
@@ -286,7 +294,7 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 - Group by area: Backend, Frontend, Tests, Infrastructure
 - Order tasks so dependencies come first (e.g., DB migration before API, API before UI)
 - Flag any high-risk tasks with ⚠️
-- **Constitution Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards)
+- **Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Extract them from the loaded project rules and match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards)
 - **For phased specs:** Each phase must be a deliverable unit (e.g., List = API + UI + tests for listing; Create = form + API + tests). Add `> Deliverable: [description]. Commit after this phase.` to Phase 1; subsequent phases get `> Deliverable: [description].` Phases are implemented one at a time — the dev commits after each phase before continuing
 
 ---
@@ -300,7 +308,7 @@ Output a summary:
 Spec status → in-progress
 Todos file created: specs/[folder]/todos.md
 
-Constitution standards applied: X
+Standards applied: X
   - [Standard 1]
   - [Standard 2]
 
@@ -308,7 +316,7 @@ Areas at risk:
   - [area]: [reason]
 
 Todo breakdown:
-  - Constitution standards: X checks
+  - Standards applied: X checks
   - Backend: X tasks
   - Frontend: X tasks
   - Tests: X tasks

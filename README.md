@@ -19,7 +19,7 @@ sh ~/workflow/install.sh --cursor  # Cursor        (@markd:write-spec, @markd:an
 sh ~/workflow/install.sh --opencode # OpenCode      (/markd:write-spec, /markd:analyze, ...)
 ```
 
-The installer copies the command files and the `specs/` scaffolding into your project. It will not overwrite `specs/CONSTITUTION.md` if you have already edited it.
+The installer copies the command files and the `specs/` scaffolding into your project.
 
 ---
 
@@ -36,7 +36,7 @@ sh ~/workflow/update.sh --cursor
 sh ~/workflow/update.sh --opencode
 ```
 
-The updater only touches the command files and `WORKFLOW.md`. It will never modify your `specs/` folder, your specs, or your `CONSTITUTION.md`.
+The updater only touches the command files and `WORKFLOW.md`. It will never modify your `specs/` folder or your specs.
 
 ---
 
@@ -61,6 +61,7 @@ Call this again on an existing spec to revise it — only changed sections are u
 **Plan the work.** The AI analyzes the spec against your real codebase.
 
 The AI will:
+- Load project rules from Cursor, Claude Code, and OpenCode locations (`.cursor/rules/`, `.claude/rules/`, `AGENTS.md`, `CLAUDE.md`)
 - Validate the spec is complete enough to act on
 - Assess complexity (simple, moderate, complex) and group tasks by phase when the spec is large enough
 - Set spec status to `in-progress`
@@ -169,7 +170,6 @@ spec-driven-workflow-v2/      ← this repo (install source)
     rollback.md
   specs/
     README.md
-    CONSTITUTION.md           ← template project standards
   install.sh                  ← first-time install
   update.sh                   ← update existing install
 
@@ -228,11 +228,19 @@ your-project/                 ← after install
 
 ---
 
-## CONSTITUTION.md
+## Project Rules
 
-`specs/CONSTITUTION.md` is your project's standards file. The `analyze` command reads it before generating todos and applies only the relevant standards to each feature (e.g. API standards for backend work, accessibility standards for UI work).
+The `analyze` command loads project standards from agent-specific locations (Cursor, Claude Code, OpenCode). Add rules in one or more of:
 
-Edit it to match your actual project conventions — it ships with opinionated defaults covering code style, TypeScript, architecture, API design, testing, git, security, and accessibility.
+- **`AGENTS.md`** (project root) — Cursor, OpenCode
+- **`.cursor/rules/`** — Cursor (`.mdc` or `.md` files; strip frontmatter from `.mdc`)
+- **`.claude/rules/`** — Claude Code (security.md, coding-style.md, etc.)
+- **`CLAUDE.md`** or **`.claude/CLAUDE.md`** — Claude Code
+- **`.cursorrules`** — Legacy Cursor format
+
+Relevant standards are applied to each feature's todos (e.g. API standards for backend work, accessibility for UI work).
+
+**Migration:** If you previously used `specs/CONSTITUTION.md`, copy its contents into `AGENTS.md` or `.cursor/rules/standards.mdc` and remove the old file.
 
 ---
 

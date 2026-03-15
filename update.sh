@@ -3,7 +3,7 @@
 # Spec-Driven AI Development Workflow — Updater
 #
 # Updates command files in a project that already has the workflow installed.
-# Your specs/ folder and CONSTITUTION.md are never touched.
+# Your specs/ folder is never touched.
 #
 # USAGE (run from inside your project folder):
 #   cd ~/my-project
@@ -100,9 +100,8 @@ echo -e "${BLUE}→ Updating WORKFLOW.md reference...${NC}"
 cp "$WORKFLOW_DIR/README.md" "$TARGET_DIR/WORKFLOW.md"
 echo "    ✓ WORKFLOW.md"
 
-# Never touch specs/ or CONSTITUTION.md
+# Never touch specs/
 echo -e "${BLUE}→ Skipping specs/...${NC}"
-echo "    — specs/CONSTITUTION.md  (your edits are safe)"
 echo "    — specs/README.md        (not overwritten)"
 echo "    — all spec folders       (untouched)"
 
@@ -114,5 +113,5 @@ echo "  ${CMD_PREFIX}markd:write-spec, ${CMD_PREFIX}markd:analyze, ${CMD_PREFIX}
 echo "  WORKFLOW.md"
 echo ""
 echo -e "${YELLOW}Not touched:${NC}"
-echo "  specs/  (all your specs and CONSTITUTION.md are unchanged)"
+echo "  specs/  (all your specs are unchanged)"
 echo ""

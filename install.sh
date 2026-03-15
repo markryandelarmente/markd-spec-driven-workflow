@@ -98,13 +98,6 @@ echo "    ✓ specs/"
 cp "$WORKFLOW_DIR/specs/README.md" "$TARGET_DIR/specs/README.md"
 echo "    ✓ specs/README.md"
 
-if [ -f "$TARGET_DIR/specs/CONSTITUTION.md" ]; then
-  echo "    ⚠️  specs/CONSTITUTION.md already exists — skipping (your edits are safe)"
-else
-  cp "$WORKFLOW_DIR/specs/CONSTITUTION.md" "$TARGET_DIR/specs/CONSTITUTION.md"
-  echo "    ✓ specs/CONSTITUTION.md"
-fi
-
 # Commands
 echo -e "${BLUE}→ Installing $TOOL_LABEL commands...${NC}"
 mkdir -p "$COMMANDS_DEST"
@@ -131,7 +124,7 @@ echo "  ${CMD_PREFIX}markd:code-review   → Review all changes before committin
 echo "  ${CMD_PREFIX}markd:rollback      → Abort implementation; restore to pre-implement state."
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo "  1. Edit   specs/CONSTITUTION.md   with your project standards"
+echo "  1. Add project rules (AGENTS.md, .cursor/rules/, or .claude/rules/) for AI guidance"
 echo "  2. $NEXT_STEP_HINT"
 echo ""
 echo -e "${YELLOW}Spec status lifecycle:${NC} backlog → in-progress → in-review → done"
