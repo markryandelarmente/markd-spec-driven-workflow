@@ -10,6 +10,7 @@
 #   sh ~/workflow/install.sh            # defaults to --claude
 #   sh ~/workflow/install.sh --claude
 #   sh ~/workflow/install.sh --cursor
+#   sh ~/workflow/install.sh --opencode
 
 set -e
 
@@ -29,10 +30,11 @@ for arg in "$@"; do
   case "$arg" in
     --claude) TOOL="claude" ;;
     --cursor) TOOL="cursor" ;;
+    --opencode) TOOL="opencode" ;;
     *)
       echo -e "${RED}✗ Unknown option: $arg${NC}"
       echo ""
-      echo "  Usage: sh install.sh [--claude|--cursor]"
+      echo "  Usage: sh install.sh [--claude|--cursor|--opencode]"
       echo ""
       exit 1
       ;;
@@ -44,6 +46,11 @@ if [ "$TOOL" = "cursor" ]; then
   COMMANDS_DEST="$TARGET_DIR/.cursor/commands/markd"
   CMD_PREFIX="@"
   NEXT_STEP_HINT="Open Cursor Agent chat and run  @markd:write-spec  to create your first spec"
+elif [ "$TOOL" = "opencode" ]; then
+  TOOL_LABEL="OpenCode"
+  COMMANDS_DEST="$TARGET_DIR/.opencode/commands/markd"
+  CMD_PREFIX="/"
+  NEXT_STEP_HINT="Open OpenCode and run  /markd:write-spec  to create your first spec"
 else
   TOOL_LABEL="Claude Code"
   COMMANDS_DEST="$TARGET_DIR/.claude/commands/markd"

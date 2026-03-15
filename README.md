@@ -2,7 +2,7 @@
 
 A structured workflow for building features with AI assistance. Every feature starts with a spec, every commit is reviewed. No code before the plan is clear.
 
-Supports **Claude Code** and **Cursor**.
+Supports **Claude Code**, **Cursor**, and **OpenCode**.
 
 ---
 
@@ -16,6 +16,7 @@ cd ~/my-project
 sh ~/workflow/install.sh           # defaults to Claude Code
 sh ~/workflow/install.sh --claude  # Claude Code  (/markd:write-spec, /markd:analyze, ...)
 sh ~/workflow/install.sh --cursor  # Cursor        (@markd:write-spec, @markd:analyze, ...)
+sh ~/workflow/install.sh --opencode # OpenCode      (/markd:write-spec, /markd:analyze, ...)
 ```
 
 The installer copies the command files and the `specs/` scaffolding into your project. It will not overwrite `specs/CONSTITUTION.md` if you have already edited it.
@@ -32,6 +33,7 @@ cd ~/my-project
 sh ~/workflow/update.sh            # defaults to Claude Code
 sh ~/workflow/update.sh --claude
 sh ~/workflow/update.sh --cursor
+sh ~/workflow/update.sh --opencode
 ```
 
 The updater only touches the command files and `WORKFLOW.md`. It will never modify your `specs/` folder, your specs, or your `CONSTITUTION.md`.
@@ -184,6 +186,13 @@ your-project/                 ← after install
     code-review.md
     rollback.md
   .cursor/commands/markd/     ← installed by --cursor
+    write-spec.md
+    analyze.md
+    implement.md
+    iterate.md
+    code-review.md
+    rollback.md
+  .opencode/commands/markd/  ← installed by --opencode
     write-spec.md
     analyze.md
     implement.md

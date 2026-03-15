@@ -10,6 +10,7 @@
 #   sh ~/workflow/update.sh            # defaults to --claude
 #   sh ~/workflow/update.sh --claude
 #   sh ~/workflow/update.sh --cursor
+#   sh ~/workflow/update.sh --opencode
 
 set -e
 
@@ -29,10 +30,11 @@ for arg in "$@"; do
   case "$arg" in
     --claude) TOOL="claude" ;;
     --cursor) TOOL="cursor" ;;
+    --opencode) TOOL="opencode" ;;
     *)
       echo -e "${RED}✗ Unknown option: $arg${NC}"
       echo ""
-      echo "  Usage: sh update.sh [--claude|--cursor]"
+      echo "  Usage: sh update.sh [--claude|--cursor|--opencode]"
       echo ""
       exit 1
       ;;
@@ -43,6 +45,10 @@ if [ "$TOOL" = "cursor" ]; then
   TOOL_LABEL="Cursor"
   COMMANDS_DEST="$TARGET_DIR/.cursor/commands/markd"
   CMD_PREFIX="@"
+elif [ "$TOOL" = "opencode" ]; then
+  TOOL_LABEL="OpenCode"
+  COMMANDS_DEST="$TARGET_DIR/.opencode/commands/markd"
+  CMD_PREFIX="/"
 else
   TOOL_LABEL="Claude Code"
   COMMANDS_DEST="$TARGET_DIR/.claude/commands/markd"
