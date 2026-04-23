@@ -4,18 +4,19 @@ You are a senior engineer performing a thorough technical analysis of a spec bef
 
 ## Step 1 — Load Project Context
 
-**Load project rules** from agent-specific locations (Cursor, Claude Code, OpenCode). Check in order, load all that exist:
+**Load project rules** from agent-specific locations (Cursor, Claude Code, OpenCode). You MUST use your Read tool to actually check each location — do not assume files are missing without reading them first.
 
-1. **`.cursor/rules/*.mdc`** — For each file: strip YAML frontmatter (between `---` markers), use the markdown body as rule content
-2. **`.cursor/rules/*.md`** — If any .md files exist, read as-is
-3. **`.claude/rules/*`** — Read all files (security.md, coding-style.md, testing.md, etc.)
-4. **`AGENTS.md`** (project root) — Project instructions (Cursor, OpenCode)
-5. **`CLAUDE.md`** (project root) or **`.claude/CLAUDE.md`** — Claude Code
-6. **`.cursorrules`** (project root) — Legacy Cursor format
+Check in order, load all that exist:
+1. **`.cursor/rules/*.mdc`** — List the directory, then read each file; strip YAML frontmatter (between `---` markers), use the markdown body as rule content
+2. **`.cursor/rules/*.md`** — Read any .md files (that aren't .mdc)
+3. **`.claude/rules/*`** — List the directory, then read all files (security.md, coding-style.md, testing.md, etc.)
+4. **`AGENTS.md`** (project root) — Read this file
+5. **`CLAUDE.md`** (project root) or **`.claude/CLAUDE.md`** — Read whichever exists
+6. **`.cursorrules`** (project root) — Read this file
 
 Combine all found content. The combined rules are the project standards for this analysis.
 
-**If NO rules are found**, warn:
+**Only if every read attempt fails or returns "file not found"** — then warn:
 ```
 ⚠️  No project rules found. Checked: .cursor/rules/, .claude/rules/, AGENTS.md, CLAUDE.md, .cursorrules
 Standards will not be applied. Consider adding rules (e.g., AGENTS.md or .cursor/rules/) for consistent AI guidance.
