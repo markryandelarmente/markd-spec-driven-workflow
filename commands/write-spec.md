@@ -57,11 +57,19 @@ Wait for the user to reply before asking the next question. Once all questions a
 
 Once all questions are answered:
 
-1. **Generate the folder name** using this format:
+1. **Generate the folder name** using this format (zero-padded 3-digit prefix so folders sort in creation order):
    ```
-   specs/MM-DD-YYYY-[type]-[kebab-case-name]/
+   specs/NNN-feat-[kebab-case-name]/
+   specs/NNN-fix-[kebab-case-name]/
    ```
-   Example: `specs/03-12-2026-feat-implement-auth/`
+   - `NNN` is three digits (`001` … `999`). Use `feat` for features and `fix` for bugfixes.
+   - Example: `specs/001-feat-implement-auth/`
+
+   **Allocate the next `NNN`:**
+   - List direct children of `specs/` whose names match `^\d{3}-` (three digits, then a hyphen).
+   - From each matching name, parse the leading integer; the next folder uses **max + 1**, zero-padded to 3 digits (e.g. max `007` → `008`).
+   - If no folder matches that pattern, use `001`.
+   - Legacy folders (e.g. old date-prefixed names) do not match `^\d{3}-` and do not affect this sequence.
 
 2. **Create `spec.md`** inside that folder with this exact structure:
 

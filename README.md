@@ -50,7 +50,7 @@ The updater only touches the command files and `WORKFLOW.md`. It will never modi
 The AI will:
 - Ask structured clarification questions one at a time (with recommended answers)
 - Cover scope, auth, error states, data changes, and edge cases
-- Create `specs/MM-DD-YYYY-[type]-[name]/spec.md`
+- Create `specs/NNN-feat-[name]/spec.md` or `specs/NNN-fix-[name]/spec.md` (three-digit prefix; see write-spec)
 - Set status to `backlog`
 
 Call this again on an existing spec to revise it — only changed sections are updated.
@@ -175,7 +175,7 @@ spec-driven-workflow-v2/      ← this repo (install source)
 
 your-project/                 ← after install
   specs/
-    03-12-2026-feat-oauth-login/
+    001-feat-oauth-login/
       spec.md                 ← the spec (source of truth)
       todos.md                ← implementation checklist
   .claude/commands/markd/     ← installed by --claude
@@ -211,7 +211,7 @@ your-project/                 ← after install
 /markd:write-spec  →  "Add OAuth login with Google"
 
 # 2. AI asks questions one at a time, you answer, spec.md is created
-#    specs/03-12-2026-feat-oauth-login/spec.md  (status: backlog)
+#    specs/001-feat-oauth-login/spec.md  (status: backlog)
 
 # 3. Analyze the spec against the codebase
 /markd:analyze  →  todos.md created, spec → in-progress

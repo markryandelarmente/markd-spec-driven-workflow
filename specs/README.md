@@ -3,7 +3,8 @@
 This folder contains all feature and fix specs for this project.
 
 Each spec lives in its own folder:
-  specs/MM-DD-YYYY-[type]-[name]/
+  specs/NNN-feat-[name]/  or  specs/NNN-fix-[name]/
+  (NNN = zero-padded 001–999; see write-spec for how to pick the next number)
     spec.md      ← the feature specification
     todos.md     ← generated implementation checklist
 
