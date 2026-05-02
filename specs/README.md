@@ -19,6 +19,7 @@ Each spec lives in its own folder:
   /implement     Implement the in-progress spec
   /iterate       Request changes to a spec
   /code-review   Review changes before committing
+  /markd:sync-obsidian  Scan repo; seed or refresh Obsidian module notes (optional; needs `.workflow-obsidian`)
 
 ## Obsidian Integration (optional)
 
@@ -39,5 +40,8 @@ When configured, every command reads and writes module notes in:
 Each module note reflects the current state of that domain — what it does,
 what capabilities are live, what files it owns, and its API endpoints.
 The agent reads these before writing new specs for better context.
+
+On a **brownfield** codebase, run **`/markd:sync-obsidian`** once (with vault configured)
+to populate or refresh module notes from the repository before relying on vault context.
 
 Add `.workflow-obsidian` to `.gitignore` — each developer sets their own vault path.

@@ -32,6 +32,8 @@ Then load the vault context:
 
 Do NOT mention the vault or its contents to the user unless there is a conflict (e.g. the requested feature already exists as a `- [x]` capability).
 
+If Step 0 finds **no** `features/*.md` notes (or only an empty stub), you may briefly suggest **`/markd:sync-obsidian`** once to seed the vault from the repo.
+
 ---
 
 ## Step 1 — Understand the Request

@@ -40,7 +40,7 @@ The updater only touches the command files and `WORKFLOW.md`. It will never modi
 
 ---
 
-## The 6 Commands
+## The 7 Commands
 
 > Claude Code: `/markd:command-name` — Cursor: `@markd:command-name`
 
@@ -125,6 +125,19 @@ Use this when you hit a critical blocker and need to discard all implementation 
 
 ---
 
+### `sync-obsidian`
+**Bootstrap or refresh vault notes from the repo.** Requires `.workflow-obsidian` with `vault` and `project` set.
+
+The AI will:
+- Scan the codebase (respecting `.gitignore`; no secrets files)
+- Infer modules (domains) and map routes, handlers, and key files
+- Create or update `[vault]/projects/[project]/overview.md` and `features/*.md` to match the vault format used by `write-spec`
+- Merge with existing notes: preserve planned `- [ ]` capabilities and **Related specs** where sensible; refresh **Files** and **API endpoints** from the scan
+
+Use once when adopting the workflow on a **brownfield** project, or anytime vault notes have **drifted** from code. Safe to re-run; existing module files are updated in place, not deleted.
+
+---
+
 ## Phased Implementation
 
 For complex specs (e.g., full CRUD with list, create, edit, delete), `/analyze` assesses size and complexity and groups tasks into phases. Each phase is a deliverable unit (e.g., Phase 1: list page + API + tests).
@@ -168,6 +181,7 @@ spec-driven-workflow-v2/      ← this repo (install source)
     iterate.md
     code-review.md
     rollback.md
+    sync-obsidian.md
   specs/
     README.md
   install.sh                  ← first-time install
@@ -185,6 +199,7 @@ your-project/                 ← after install
     iterate.md
     code-review.md
     rollback.md
+    sync-obsidian.md
   .cursor/commands/markd/     ← installed by --cursor
     write-spec.md
     analyze.md
@@ -192,6 +207,7 @@ your-project/                 ← after install
     iterate.md
     code-review.md
     rollback.md
+    sync-obsidian.md
   .opencode/commands/markd/  ← installed by --opencode
     write-spec.md
     analyze.md
@@ -199,6 +215,7 @@ your-project/                 ← after install
     iterate.md
     code-review.md
     rollback.md
+    sync-obsidian.md
   WORKFLOW.md                 ← copy of this README for reference
 ```
 
@@ -266,6 +283,7 @@ project=my-project-name
 | `implement` | — | Marks capabilities `- [x]`, overwrites Files and API endpoints on completion |
 | `iterate` | — | Overwrites What it does + adds new capability lines |
 | `code-review` | — | Updates status tag to `#done` |
+| `sync-obsidian` | Existing notes (merge) | (Re)builds `overview.md` and `features/*.md` from a codebase scan |
 
 ### Vault structure
 
