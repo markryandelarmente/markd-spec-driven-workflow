@@ -19,29 +19,29 @@ Each spec lives in its own folder:
   /implement     Implement the in-progress spec
   /iterate       Request changes to a spec
   /code-review   Review changes before committing
-  /markd:sync-obsidian  Scan repo; seed or refresh Obsidian module notes (optional; needs `.workflow-obsidian`)
+  /markd:scan-project   Scan repo; seed or refresh docs/ from the codebase
 
-## Obsidian Integration (optional)
+## Docs Integration (optional)
 
-Add a `.workflow-obsidian` file at the project root to enable Obsidian vault sync:
+A `docs/` folder at the project root enables AI context across all commands.
+Run `/markd:scan-project` once to generate it from the codebase — no config needed.
 
-  vault=/absolute/path/to/your/vault
-  project=my-project-name
+When `docs/` exists, every command reads feature notes and conventions automatically:
 
-When configured, every command reads and writes module notes in:
+  docs/
+    overview.md           ← project index
+    architecture.md       ← system structure and decisions
+    conventions.md        ← coding rules and naming (AI reads every session)
+    apps/
+      [app]/
+        overview.md
+        features/
+          auth.md         ← current state of each feature domain
+    packages/
+      [package].md
 
-  [vault]/projects/[project]/
-    overview.md
-    features/
-      auth.md
-      user-management.md
-      ...
-
-Each module note reflects the current state of that domain — what it does,
-what capabilities are live, what files it owns, and its API endpoints.
+Each feature note reflects the current state of that domain — what it does,
+what capabilities are live, what endpoints it owns, and how it relates to other features.
 The agent reads these before writing new specs for better context.
 
-On a **brownfield** codebase, run **`/markd:sync-obsidian`** once (with vault configured)
-to populate or refresh module notes from the repository before relying on vault context.
-
-Add `.workflow-obsidian` to `.gitignore` — each developer sets their own vault path.
+Open `docs/` as an Obsidian vault, or use any markdown editor.

@@ -16,7 +16,7 @@ Supports **Claude Code**, **Cursor**, and **OpenCode**.
 | `/markd:iterate` | Request changes to a spec |
 | `/markd:code-review` | Review changes before commit |
 | `/markd:rollback` | Abort and restore working tree |
-| `/markd:sync-obsidian` | Scan repo; seed or refresh Obsidian module notes (`.workflow-obsidian`) |
+| `/markd:scan-project` | Scan repo; seed or refresh project docs (`docs/`) |
 
 ---
 

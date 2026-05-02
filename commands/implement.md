@@ -194,20 +194,19 @@ When all items in `todos.md` are checked (flat) or all phases are complete (phas
    Next step: Run /code-review before committing.
    ```
 
-5. **Obsidian update (if configured):**
+5. **Docs update (if available):**
 
-   If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+   If `docs/` exists at the project root, then:
 
-   1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`.
+   1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`.
    2. In **Current capabilities**, mark the `- [ ]` lines added by this spec as `- [x]`.
-   3. **Overwrite** the **Files** section with the final list of files actually created or modified during implementation.
-   4. **Overwrite** the **API endpoints** table with the complete current endpoint list for this module (include all endpoints, not just the ones added by this spec).
-   5. Update the module's status tag to `#done` if all capability lines are now `- [x]`. If some `- [ ]` lines remain (from other specs), leave the tag as `#in-progress`.
-   6. Update the matching line in `overview.md` to match the module's new status tag.
+   3. **Overwrite** the **Endpoints** section (API features only) with the complete current endpoint list for this module.
+   4. Update the module's status tag to `#done` if all capability lines are now `- [x]`. If some `- [ ]` lines remain (from other specs), leave the tag as `#in-progress`.
+   5. Update the matching line in `docs/overview.md` to match the module's new status tag.
 
-   Include in the output: `Obsidian vault updated: projects/[project]/features/[module].md`
+   Include in the output: `Docs updated: docs/[path]/[module].md`
 
-   No vault update on per-phase completion — only on full spec completion.
+   No docs update on per-phase completion — only on full spec completion.
 
 ---
 

@@ -107,14 +107,14 @@ New todos added:
 Next step: run /implement to apply the changes.
 ```
 
-### Obsidian update (if configured)
+### Docs update (if available)
 
-If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+If `docs/` exists at the project root, then:
 
-1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`.
-2. **Overwrite** the **What it does** paragraph with an updated summary reflecting the changed scope.
+1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`.
+2. **Overwrite** the **Role** sentence with an updated summary reflecting the changed scope.
 3. Add any new `- [ ]` lines to **Current capabilities** for newly scoped work. If any existing capabilities were removed by this iteration, remove their `- [ ]` or `- [x]` lines.
 4. Update the module's status tag to `#in-progress` if it was `#done`.
-5. Update the matching line in `overview.md` to `#in-progress` if it was `#done`.
+5. Update the matching line in `docs/overview.md` to `#in-progress` if it was `#done`.
 
-Include in the output: `Obsidian vault updated: projects/[project]/features/[module].md`
+Include in the output: `Docs updated: docs/[path]/[module].md`

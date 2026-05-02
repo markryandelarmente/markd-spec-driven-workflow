@@ -125,16 +125,17 @@ Use this when you hit a critical blocker and need to discard all implementation 
 
 ---
 
-### `sync-obsidian`
-**Bootstrap or refresh vault notes from the repo.** Requires `.workflow-obsidian` with `vault` and `project` set.
+### `scan-project`
+**Bootstrap or refresh `docs/` from the codebase.** No config needed — just run it.
 
 The AI will:
 - Scan the codebase (respecting `.gitignore`; no secrets files)
-- Infer modules (domains) and map routes, handlers, and key files
-- Create or update `[vault]/projects/[project]/overview.md` and `features/*.md` to match the vault format used by `write-spec`
-- Merge with existing notes: preserve planned `- [ ]` capabilities and **Related specs** where sensible; refresh **Files** and **API endpoints** from the scan
+- Detect monorepo layout (`apps/`, `packages/`) or single-app layout automatically
+- Create or update `docs/overview.md`, `docs/architecture.md`, and feature notes under `docs/apps/` or `docs/features/`
+- Merge with existing notes: preserve planned `- [ ]` capabilities and **Related specs** where sensible; refresh **Endpoints** from the scan
+- Seed `docs/conventions.md` once from `AGENTS.md` / `.cursor/rules/*` — never overwrites user edits
 
-Use once when adopting the workflow on a **brownfield** project, or anytime vault notes have **drifted** from code. Safe to re-run; existing module files are updated in place, not deleted.
+Use once when adopting the workflow on a **brownfield** project, or anytime docs have **drifted** from code. Safe to re-run; existing notes are updated in place, not deleted.
 
 ---
 
@@ -181,41 +182,46 @@ spec-driven-workflow-v2/      ← this repo (install source)
     iterate.md
     code-review.md
     rollback.md
-    sync-obsidian.md
+    scan-project.md
+  templates/
+    docs/                     ← canonical doc templates (seeded into projects)
+      overview.md
+      architecture.md
+      conventions.md
+      feature.md
   specs/
     README.md
   install.sh                  ← first-time install
   update.sh                   ← update existing install
 
 your-project/                 ← after install
+  apps/                       ← monorepo apps (if applicable)
+  packages/                   ← shared packages (if applicable)
   specs/
     001-feat-oauth-login/
       spec.md                 ← the spec (source of truth)
       todos.md                ← implementation checklist
+  docs/                       ← project documentation (open as Obsidian vault)
+    overview.md
+    architecture.md
+    conventions.md
+    apps/
+      web/
+        overview.md
+        features/
+          auth.md
+    packages/
+      database.md
+    .templates/               ← canonical templates (reference for AI)
   .claude/commands/markd/     ← installed by --claude
     write-spec.md
-    analyze.md
-    implement.md
-    iterate.md
-    code-review.md
-    rollback.md
-    sync-obsidian.md
+    ...
   .cursor/commands/markd/     ← installed by --cursor
     write-spec.md
-    analyze.md
-    implement.md
-    iterate.md
-    code-review.md
-    rollback.md
-    sync-obsidian.md
-  .opencode/commands/markd/  ← installed by --opencode
+    ...
+  .opencode/commands/markd/   ← installed by --opencode
     write-spec.md
-    analyze.md
-    implement.md
-    iterate.md
-    code-review.md
-    rollback.md
-    sync-obsidian.md
+    ...
   WORKFLOW.md                 ← copy of this README for reference
 ```
 
@@ -261,44 +267,59 @@ Relevant standards are applied to each feature's todos (e.g. API standards for b
 
 ---
 
-## Obsidian Integration (optional)
+## Docs Integration (optional)
 
-Connect the workflow to an Obsidian vault so AI agents build project knowledge over time. One module note per domain (e.g. `auth.md`, `payments.md`) tracks current state — what capabilities are live, what files exist, what endpoints are available.
+Keep a `docs/` folder at your project root so AI agents build project knowledge over time. One feature note per domain tracks current state — what capabilities are live, what endpoints exist, how features relate. Open `docs/` as an Obsidian vault, or use any markdown editor.
 
 ### Setup
 
-Create `.workflow-obsidian` at your project root (add it to `.gitignore`):
-
-```
-vault=/Users/you/Documents/my-vault
-project=my-project-name
-```
+No config file needed. Run `/markd:scan-project` once to generate `docs/` from your codebase. After that, the integration is always on.
 
 ### How it works
 
-| Command | Reads vault | Writes vault |
-|---------|-------------|--------------|
-| `write-spec` | Reads all module notes for context before asking questions | Creates or updates the module note; adds `- [ ]` capability lines |
-| `analyze` | — | Overwrites the module's Files section with confirmed affected files |
-| `implement` | — | Marks capabilities `- [x]`, overwrites Files and API endpoints on completion |
-| `iterate` | — | Overwrites What it does + adds new capability lines |
+| Command | Reads `docs/` | Writes `docs/` |
+|---------|--------------|----------------|
+| `write-spec` | Reads all feature notes + `conventions.md` for context before asking questions | Creates or updates the feature note; adds `- [ ]` capability lines |
+| `analyze` | — | Updates the feature note's capabilities to reflect confirmed scope |
+| `implement` | — | Marks capabilities `- [x]`, updates endpoints on completion |
+| `iterate` | — | Updates Role + adds new capability lines |
 | `code-review` | — | Updates status tag to `#done` |
-| `sync-obsidian` | Existing notes (merge) | (Re)builds `overview.md` and `features/*.md` from a codebase scan |
+| `scan-project` | Existing notes (merge) | (Re)builds all docs from a codebase scan |
 
-### Vault structure
+If `docs/` does not exist, all doc steps are silently skipped. The integration is fully opt-in.
+
+### Docs structure
 
 ```
-vault/projects/my-project/
-  overview.md              ← project index: description, tech stack, module list
-  features/
-    auth.md                ← current state of the auth module
-    user-management.md
-    payments.md
+docs/
+  overview.md              ← project index: description, tech stack, app list
+  architecture.md          ← system structure, data flow, key decisions
+  conventions.md           ← coding rules and naming (AI reads this every session)
+
+  apps/
+    web/
+      overview.md          ← web app scope and tech
+      features/
+        auth.md            ← current state of the auth feature (web)
+        notifications.md
+    api/
+      overview.md
+      features/
+        auth.md            ← current state of the auth feature (api)
+        notifications.md
+
+  packages/
+    api-contracts.md       ← shared types and schemas
+    database.md
+
+  .templates/              ← canonical doc templates (used by AI commands)
+    overview.md
+    architecture.md
+    conventions.md
+    feature.md
 ```
 
-Each module note answers one question: **"what does this module look like right now?"** — no history, no architecture docs. Full history stays in `spec.md` and `git`.
-
-If `.workflow-obsidian` does not exist, all Obsidian steps are silently skipped. The integration is fully opt-in.
+Each feature note answers: **"what does this feature look like right now?"** — no history, no implementation details. Full history stays in `spec.md` and `git`.
 
 ---
 

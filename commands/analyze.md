@@ -328,13 +328,13 @@ Next step: run /implement to start building.
 [If phased: Implementation will run one phase at a time — you'll commit after each phase, then re-run /implement for the next.]
 ```
 
-### Obsidian update (if configured)
+### Docs update (if available)
 
-If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+If `docs/` exists at the project root, then:
 
-1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`. If no module note references this spec yet, auto-assign using the same logic as `write-spec` Step 4.
-2. **Overwrite** the module note's **Files** section with the definitive list of files identified in Step 4 (files to create + files to modify).
+1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`. If no note references this spec yet, auto-assign using the same logic as `write-spec` Step 4.
+2. **Overwrite** the feature note's **Current capabilities** `- [ ]` lines to reflect the confirmed scope of this spec.
 3. Update the module's status tag from `#backlog` to `#in-progress`.
-4. Update the matching line in `overview.md` from `#backlog` to `#in-progress`.
+4. Update the matching line in `docs/overview.md` from `#backlog` to `#in-progress`.
 
-Include in the confirmation output: `Obsidian vault updated: projects/[project]/features/[module].md`
+Include in the confirmation output: `Docs updated: docs/[path]/[module].md`

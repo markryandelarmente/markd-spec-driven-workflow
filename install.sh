@@ -101,7 +101,7 @@ echo "    ✓ specs/README.md"
 # Commands
 echo -e "${BLUE}→ Installing $TOOL_LABEL commands...${NC}"
 mkdir -p "$COMMANDS_DEST"
-for cmd in write-spec analyze implement iterate code-review rollback sync-obsidian; do
+for cmd in write-spec analyze implement iterate code-review rollback scan-project; do
   cp "$WORKFLOW_DIR/commands/$cmd.md" "$COMMANDS_DEST/$cmd.md"
   echo "    ✓ ${CMD_PREFIX}${cmd}"
 done
@@ -111,31 +111,55 @@ echo -e "${BLUE}→ Installing WORKFLOW.md reference...${NC}"
 cp "$WORKFLOW_DIR/README.md" "$TARGET_DIR/WORKFLOW.md"
 echo "    ✓ WORKFLOW.md"
 
-# .workflow-obsidian (optional Obsidian vault config)
-if [ ! -f "$TARGET_DIR/.workflow-obsidian" ]; then
-  echo -e "${BLUE}→ Creating .workflow-obsidian config (optional)...${NC}"
-  cat > "$TARGET_DIR/.workflow-obsidian" <<'OBSIDIAN_EOF'
-# Obsidian vault integration (optional)
-# Uncomment and set these values to enable Obsidian vault sync.
-# Each command will read/write module notes in your vault.
-#
-# vault=/absolute/path/to/your/obsidian/vault
-# project=my-project-name
-OBSIDIAN_EOF
-  echo "    ✓ .workflow-obsidian (edit to enable Obsidian integration)"
-else
-  echo -e "${YELLOW}→ .workflow-obsidian already exists, skipping${NC}"
-fi
+# docs/ folder — project documentation (Obsidian vault)
+echo -e "${BLUE}→ Creating docs/ folder...${NC}"
+mkdir -p "$TARGET_DIR/docs/.templates"
+echo "    ✓ docs/"
+echo "    ✓ docs/.templates/"
 
-# .gitignore — ensure .workflow-obsidian is ignored
-if [ -f "$TARGET_DIR/.gitignore" ]; then
-  if ! grep -q "^\.workflow-obsidian$" "$TARGET_DIR/.gitignore"; then
-    echo ".workflow-obsidian" >> "$TARGET_DIR/.gitignore"
-    echo "    ✓ Added .workflow-obsidian to .gitignore"
+# Seed template files
+for tpl in overview architecture conventions feature; do
+  DEST="$TARGET_DIR/docs/.templates/$tpl.md"
+  SRC="$WORKFLOW_DIR/templates/docs/$tpl.md"
+  if [ ! -f "$DEST" ] && [ -f "$SRC" ]; then
+    cp "$SRC" "$DEST"
+    echo "    ✓ docs/.templates/$tpl.md"
   fi
-else
-  echo ".workflow-obsidian" > "$TARGET_DIR/.gitignore"
-  echo "    ✓ Created .gitignore with .workflow-obsidian"
+done
+
+# Seed docs/README.md if missing
+if [ ! -f "$TARGET_DIR/docs/README.md" ]; then
+  cat > "$TARGET_DIR/docs/README.md" <<'DOCS_EOF'
+# Project Docs
+
+This folder is the project documentation vault (open with Obsidian or any markdown editor).
+
+## Structure
+
+```
+docs/
+  overview.md          ← project index
+  architecture.md      ← system structure and decisions
+  conventions.md       ← coding rules and naming patterns (AI reads this)
+
+  apps/
+    [app]/
+      overview.md
+      features/
+        [feature].md   ← one file per feature domain
+
+  packages/
+    [package].md       ← one file per shared package
+
+  .templates/          ← canonical templates used by AI commands
+```
+
+## Usage
+
+Run `/markd:scan-project` to generate or refresh these docs from the codebase.
+Run `/markd:write-spec` to start a new feature — it reads these docs automatically.
+DOCS_EOF
+  echo "    ✓ docs/README.md"
 fi
 
 echo ""
@@ -149,11 +173,11 @@ echo "  ${CMD_PREFIX}markd:implement → Build it. Todos get checked off as you 
 echo "  ${CMD_PREFIX}markd:iterate → Request changes to an in-progress spec."
 echo "  ${CMD_PREFIX}markd:code-review → Review all changes before committing."
 echo "  ${CMD_PREFIX}markd:rollback → Abort implementation; restore to pre-implement state."
-echo "  ${CMD_PREFIX}markd:sync-obsidian → Scan repo; seed or refresh Obsidian module notes (needs .workflow-obsidian)."
+  echo "  ${CMD_PREFIX}markd:scan-project → Scan repo; seed or refresh docs/ from the codebase."
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Add project rules (AGENTS.md, .cursor/rules/, or .claude/rules/) for AI guidance"
-echo "  2. (Optional) Edit .workflow-obsidian to connect your Obsidian vault"
+echo "  2. Run ${CMD_PREFIX}markd:scan-project to generate docs/ from your codebase"
 echo "  3. $NEXT_STEP_HINT"
 echo ""
 echo -e "${YELLOW}Spec status lifecycle:${NC} backlog → in-progress → in-review → done"

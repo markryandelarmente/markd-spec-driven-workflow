@@ -10,29 +10,27 @@ This command can be called **twice**: once to create a new spec, and again to re
 
 ---
 
-## Step 0 — Load Obsidian Context (if configured)
+## Step 0 — Load Docs Context (if available)
 
-Check if `.workflow-obsidian` exists at the project root. If it does **not** exist, skip this step entirely and proceed to Step 1.
+Check if `docs/` exists at the project root. If it does **not** exist, skip this step entirely and proceed to Step 1.
 
-If it exists, parse the two values:
-```
-vault=/absolute/path/to/vault
-project=my-project-name
-```
-
-Then load the vault context:
-1. Read `[vault]/projects/[project]/overview.md` (if it exists) — extract the project description, tech stack, and modules list
-2. Read every module note listed under `[vault]/projects/[project]/features/` — these are small current-state notes, so read all of them
-3. Build an internal project snapshot from these notes:
+If it exists, load the docs context:
+1. Read `docs/overview.md` (if it exists) — extract the project description, tech stack, and module list
+2. Read `docs/conventions.md` (if it exists) — load all rules and conventions as silent AI context for the entire session
+3. Read all feature notes, searching in order:
+   - `docs/apps/*/features/*.md` (monorepo)
+   - `docs/packages/*.md` (monorepo packages)
+   - `docs/features/*.md` (single-app or legacy)
+4. Build an internal project snapshot from these notes:
    - What modules exist and what each one does
    - What capabilities are live (`- [x]`) vs. planned but not yet built (`- [ ]`)
    - What files belong to each module
-   - What API endpoints already exist
-4. Use this snapshot **silently** during Steps 1–3 to ask smarter clarification questions, avoid duplicating existing capabilities, and correctly identify which module the new spec belongs to
+   - What endpoints already exist
+5. Use this snapshot **silently** during Steps 1–3 to ask smarter clarification questions, avoid duplicating existing capabilities, and correctly identify which module the new spec belongs to
 
-Do NOT mention the vault or its contents to the user unless there is a conflict (e.g. the requested feature already exists as a `- [x]` capability).
+Do NOT mention the docs or their contents to the user unless there is a conflict (e.g. the requested feature already exists as a `- [x]` capability).
 
-If Step 0 finds **no** `features/*.md` notes (or only an empty stub), you may briefly suggest **`/markd:sync-obsidian`** once to seed the vault from the repo.
+If Step 0 finds `docs/` but no feature notes (or only empty stubs), you may briefly suggest **`/markd:scan-project`** once to seed the docs from the repo.
 
 ---
 
@@ -159,60 +157,36 @@ Once all questions are answered:
 
 ---
 
-## Step 4 — Write to Obsidian Vault (if configured)
+## Step 4 — Write to Docs (if available)
 
-If `.workflow-obsidian` does **not** exist, skip this step.
+If `docs/` does **not** exist at the project root, skip this step.
 
 If it exists:
 
-1. **Auto-assign the spec to a module.** Compare the spec's description and affected areas against each existing module note's **What it does** and **Files** sections. Pick the best-matching module. If no module fits well, create a new one using the spec's domain as the filename (kebab-case, e.g. `auth.md`, `user-management.md`).
+1. **Detect layout:**
+   - **Monorepo** — `apps/` exists at project root → feature notes live at `docs/apps/[app]/features/[module].md`
+   - **Single-app** — no `apps/` directory → feature notes live at `docs/features/[module].md`
 
-2. **If creating a new module note** at `[vault]/projects/[project]/features/[module].md`:
+2. **Auto-assign the spec to a module.** Compare the spec's description and affected areas against each existing feature note's **Role** and **Current capabilities**. Pick the best-matching note. If no note fits, create a new one using the spec's domain as the filename (kebab-case, e.g. `auth.md`, `notifications.md`).
 
-```markdown
-# [Module Name]
+3. **If creating a new feature note**, use the format from `docs/.templates/feature.md`. Populate:
+   - `## Role` — one sentence from the spec's Overview
+   - `## Current capabilities` — `- [ ]` line(s) for what this spec will build
+   - `## Related specs` — the spec folder name
+   - Omit sections not relevant to this app type (e.g. omit `## Endpoints` for Web features)
+   - Set status tag to `#backlog`
 
-## What it does
-[One paragraph summarizing this module's responsibility, derived from the spec's Overview]
-
-## Current capabilities
-- [ ] [The capability this spec will build]
-
-## Files
-[Leave empty — populated by /analyze]
-
-## API endpoints
-[Leave empty — populated by /implement]
-
-## Related specs
-- [NNN-feat/fix-name]
-
-#module #[module-name] #backlog
-```
-
-3. **If updating an existing module note:**
+4. **If updating an existing feature note:**
    - Add `- [ ]` line(s) to **Current capabilities** for what this spec will build
-   - Append the spec to **Related specs**
-   - Also add any items from the spec's **Out of Scope** or **Open Questions** as `- [ ]` capabilities if they represent known future work for this module
+   - Append the spec folder name to **Related specs**
+   - Add any items from **Out of Scope** or **Open Questions** as `- [ ]` capabilities if they represent known future work
 
-4. **Update `overview.md`:**
-   - If `overview.md` does not exist, create it:
-     ```markdown
-     # [Project Name]
-
-     ## What it does
-     [From AGENTS.md or project rules — written once]
-
-     ## Tech stack
-     [From AGENTS.md or project rules — written once]
-
-     ## Modules
-     - [[features/[module]]] — [one-line summary] #backlog
-     ```
-   - If `overview.md` exists and this is a new module, add a line to the modules list
+5. **Update `docs/overview.md`:**
+   - If it does not exist, create it using the format from `docs/.templates/overview.md`
+   - If it exists and this is a new module, add a wikilink line in the appropriate section (Apps or Modules)
    - If this module already has a line, leave its status tag unchanged
 
-5. **Confirm:** Include in the user output: `Obsidian vault updated: projects/[project]/features/[module].md`
+6. **Confirm:** Include in the user output: `Docs updated: docs/[path]/[module].md`
 
 ---
 

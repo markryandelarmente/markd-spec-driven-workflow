@@ -151,12 +151,12 @@ Format the report exactly like this:
      chore:    config / tooling
    ```
 
-### Obsidian update (if configured)
+### Docs update (if available)
 
-If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+If `docs/` exists at the project root, then:
 
-1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`.
+1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`.
 2. Update the module's status tag to `#done` (if all capability lines are `- [x]`).
-3. Update the matching line in `overview.md` to `#done`.
+3. Update the matching line in `docs/overview.md` to `#done`.
 
-Include in the output: `Obsidian vault updated: projects/[project]/features/[module].md`
+Include in the output: `Docs updated: docs/[path]/[module].md`
