@@ -111,6 +111,33 @@ echo -e "${BLUE}→ Installing WORKFLOW.md reference...${NC}"
 cp "$WORKFLOW_DIR/README.md" "$TARGET_DIR/WORKFLOW.md"
 echo "    ✓ WORKFLOW.md"
 
+# .workflow-obsidian (optional Obsidian vault config)
+if [ ! -f "$TARGET_DIR/.workflow-obsidian" ]; then
+  echo -e "${BLUE}→ Creating .workflow-obsidian config (optional)...${NC}"
+  cat > "$TARGET_DIR/.workflow-obsidian" <<'OBSIDIAN_EOF'
+# Obsidian vault integration (optional)
+# Uncomment and set these values to enable Obsidian vault sync.
+# Each command will read/write module notes in your vault.
+#
+# vault=/absolute/path/to/your/obsidian/vault
+# project=my-project-name
+OBSIDIAN_EOF
+  echo "    ✓ .workflow-obsidian (edit to enable Obsidian integration)"
+else
+  echo -e "${YELLOW}→ .workflow-obsidian already exists, skipping${NC}"
+fi
+
+# .gitignore — ensure .workflow-obsidian is ignored
+if [ -f "$TARGET_DIR/.gitignore" ]; then
+  if ! grep -q "^\.workflow-obsidian$" "$TARGET_DIR/.gitignore"; then
+    echo ".workflow-obsidian" >> "$TARGET_DIR/.gitignore"
+    echo "    ✓ Added .workflow-obsidian to .gitignore"
+  fi
+else
+  echo ".workflow-obsidian" > "$TARGET_DIR/.gitignore"
+  echo "    ✓ Created .gitignore with .workflow-obsidian"
+fi
+
 echo ""
 echo -e "${GREEN}${BOLD}✓ $TOOL_LABEL installation complete!${NC}"
 echo ""
@@ -125,7 +152,8 @@ echo "  ${CMD_PREFIX}markd:rollback      → Abort implementation; restore to pr
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Add project rules (AGENTS.md, .cursor/rules/, or .claude/rules/) for AI guidance"
-echo "  2. $NEXT_STEP_HINT"
+echo "  2. (Optional) Edit .workflow-obsidian to connect your Obsidian vault"
+echo "  3. $NEXT_STEP_HINT"
 echo ""
 echo -e "${YELLOW}Spec status lifecycle:${NC} backlog → in-progress → in-review → done"
 echo ""

@@ -194,6 +194,21 @@ When all items in `todos.md` are checked (flat) or all phases are complete (phas
    Next step: Run /code-review before committing.
    ```
 
+5. **Obsidian update (if configured):**
+
+   If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+
+   1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`.
+   2. In **Current capabilities**, mark the `- [ ]` lines added by this spec as `- [x]`.
+   3. **Overwrite** the **Files** section with the final list of files actually created or modified during implementation.
+   4. **Overwrite** the **API endpoints** table with the complete current endpoint list for this module (include all endpoints, not just the ones added by this spec).
+   5. Update the module's status tag to `#done` if all capability lines are now `- [x]`. If some `- [ ]` lines remain (from other specs), leave the tag as `#in-progress`.
+   6. Update the matching line in `overview.md` to match the module's new status tag.
+
+   Include in the output: `Obsidian vault updated: projects/[project]/features/[module].md`
+
+   No vault update on per-phase completion — only on full spec completion.
+
 ---
 
 ## Step 5 — If You Get Stuck

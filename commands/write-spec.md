@@ -10,6 +10,30 @@ This command can be called **twice**: once to create a new spec, and again to re
 
 ---
 
+## Step 0 — Load Obsidian Context (if configured)
+
+Check if `.workflow-obsidian` exists at the project root. If it does **not** exist, skip this step entirely and proceed to Step 1.
+
+If it exists, parse the two values:
+```
+vault=/absolute/path/to/vault
+project=my-project-name
+```
+
+Then load the vault context:
+1. Read `[vault]/projects/[project]/overview.md` (if it exists) — extract the project description, tech stack, and modules list
+2. Read every module note listed under `[vault]/projects/[project]/features/` — these are small current-state notes, so read all of them
+3. Build an internal project snapshot from these notes:
+   - What modules exist and what each one does
+   - What capabilities are live (`- [x]`) vs. planned but not yet built (`- [ ]`)
+   - What files belong to each module
+   - What API endpoints already exist
+4. Use this snapshot **silently** during Steps 1–3 to ask smarter clarification questions, avoid duplicating existing capabilities, and correctly identify which module the new spec belongs to
+
+Do NOT mention the vault or its contents to the user unless there is a conflict (e.g. the requested feature already exists as a `- [x]` capability).
+
+---
+
 ## Step 1 — Understand the Request
 
 Read the user's input carefully. Identify:
@@ -130,6 +154,63 @@ Once all questions are answered:
    - The folder path created
    - The status set to `backlog`
    - Next step: run `/analyze` to begin implementation planning
+
+---
+
+## Step 4 — Write to Obsidian Vault (if configured)
+
+If `.workflow-obsidian` does **not** exist, skip this step.
+
+If it exists:
+
+1. **Auto-assign the spec to a module.** Compare the spec's description and affected areas against each existing module note's **What it does** and **Files** sections. Pick the best-matching module. If no module fits well, create a new one using the spec's domain as the filename (kebab-case, e.g. `auth.md`, `user-management.md`).
+
+2. **If creating a new module note** at `[vault]/projects/[project]/features/[module].md`:
+
+```markdown
+# [Module Name]
+
+## What it does
+[One paragraph summarizing this module's responsibility, derived from the spec's Overview]
+
+## Current capabilities
+- [ ] [The capability this spec will build]
+
+## Files
+[Leave empty — populated by /analyze]
+
+## API endpoints
+[Leave empty — populated by /implement]
+
+## Related specs
+- [NNN-feat/fix-name]
+
+#module #[module-name] #backlog
+```
+
+3. **If updating an existing module note:**
+   - Add `- [ ]` line(s) to **Current capabilities** for what this spec will build
+   - Append the spec to **Related specs**
+   - Also add any items from the spec's **Out of Scope** or **Open Questions** as `- [ ]` capabilities if they represent known future work for this module
+
+4. **Update `overview.md`:**
+   - If `overview.md` does not exist, create it:
+     ```markdown
+     # [Project Name]
+
+     ## What it does
+     [From AGENTS.md or project rules — written once]
+
+     ## Tech stack
+     [From AGENTS.md or project rules — written once]
+
+     ## Modules
+     - [[features/[module]]] — [one-line summary] #backlog
+     ```
+   - If `overview.md` exists and this is a new module, add a line to the modules list
+   - If this module already has a line, leave its status tag unchanged
+
+5. **Confirm:** Include in the user output: `Obsidian vault updated: projects/[project]/features/[module].md`
 
 ---
 

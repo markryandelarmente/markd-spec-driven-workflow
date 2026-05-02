@@ -244,6 +244,46 @@ Relevant standards are applied to each feature's todos (e.g. API standards for b
 
 ---
 
+## Obsidian Integration (optional)
+
+Connect the workflow to an Obsidian vault so AI agents build project knowledge over time. One module note per domain (e.g. `auth.md`, `payments.md`) tracks current state — what capabilities are live, what files exist, what endpoints are available.
+
+### Setup
+
+Create `.workflow-obsidian` at your project root (add it to `.gitignore`):
+
+```
+vault=/Users/you/Documents/my-vault
+project=my-project-name
+```
+
+### How it works
+
+| Command | Reads vault | Writes vault |
+|---------|-------------|--------------|
+| `write-spec` | Reads all module notes for context before asking questions | Creates or updates the module note; adds `- [ ]` capability lines |
+| `analyze` | — | Overwrites the module's Files section with confirmed affected files |
+| `implement` | — | Marks capabilities `- [x]`, overwrites Files and API endpoints on completion |
+| `iterate` | — | Overwrites What it does + adds new capability lines |
+| `code-review` | — | Updates status tag to `#done` |
+
+### Vault structure
+
+```
+vault/projects/my-project/
+  overview.md              ← project index: description, tech stack, module list
+  features/
+    auth.md                ← current state of the auth module
+    user-management.md
+    payments.md
+```
+
+Each module note answers one question: **"what does this module look like right now?"** — no history, no architecture docs. Full history stays in `spec.md` and `git`.
+
+If `.workflow-obsidian` does not exist, all Obsidian steps are silently skipped. The integration is fully opt-in.
+
+---
+
 ## Stack Compatibility
 
 Stack-agnostic by default. The `implement` command auto-detects your package manager (`pnpm` > `yarn` > `npm`) and reads `package.json` scripts to find the correct lint, build, and test commands.

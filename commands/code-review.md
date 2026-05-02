@@ -150,3 +150,13 @@ Format the report exactly like this:
      test:     tests only
      chore:    config / tooling
    ```
+
+### Obsidian update (if configured)
+
+If `.workflow-obsidian` exists at the project root, parse `vault` and `project`, then:
+
+1. Find the module note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note under `[vault]/projects/[project]/features/`.
+2. Update the module's status tag to `#done` (if all capability lines are `- [x]`).
+3. Update the matching line in `overview.md` to `#done`.
+
+Include in the output: `Obsidian vault updated: projects/[project]/features/[module].md`
