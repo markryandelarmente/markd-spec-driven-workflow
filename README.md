@@ -40,7 +40,7 @@ The updater only touches the command files and `WORKFLOW.md`. It will never modi
 
 ---
 
-## The 7 Commands
+## The 8 Commands
 
 > Claude Code: `/markd:command-name` — Cursor: `@markd:command-name`
 
@@ -125,6 +125,21 @@ Use this when you hit a critical blocker and need to discard all implementation 
 
 ---
 
+### `improve-architecture`
+**Surface architectural friction and design refactors.** Find shallow modules and design deeper ones.
+
+The AI will:
+- Load `docs/architecture.md` and `docs/conventions.md` for domain context
+- Explore the codebase organically, applying the deletion test to suspect modules
+- Present a numbered list of deepening opportunities (problem / solution / benefits)
+- Once you pick one, grill you on the design one question at a time until the interface and test strategy are clear
+- Record any new domain terms in `docs/conventions.md` and any rejected-with-reason decisions in `docs/architecture.md`
+- Hand off with a pre-filled brief to paste into `/write-spec`
+
+Does not create a spec itself — feeds into `/write-spec` like any other feature description.
+
+---
+
 ### `scan-project`
 **Bootstrap or refresh `docs/` from the codebase.** No config needed — just run it.
 
@@ -183,6 +198,7 @@ spec-driven-workflow-v2/      ← this repo (install source)
     code-review.md
     rollback.md
     scan-project.md
+    improve-architecture.md
   templates/
     docs/                     ← canonical doc templates (seeded into projects)
       overview.md
@@ -281,6 +297,7 @@ No config file needed. Run `/markd:scan-project` once to generate `docs/` from y
 |---------|--------------|----------------|
 | `write-spec` | Reads all feature notes + `conventions.md` for context before asking questions | Creates or updates the feature note; adds `- [ ]` capability lines |
 | `create-todos` | — | Updates the feature note's capabilities to reflect confirmed scope |
+| `improve-architecture` | Reads `architecture.md` + `conventions.md` for domain context | Updates `conventions.md` with new terms; records decisions in `architecture.md` |
 | `implement` | — | Marks capabilities `- [x]`, updates endpoints on completion |
 | `iterate` | — | Updates Role + adds new capability lines |
 | `code-review` | — | Updates status tag to `#done` |

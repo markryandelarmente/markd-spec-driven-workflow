@@ -101,7 +101,7 @@ echo "    ✓ specs/README.md"
 # Commands
 echo -e "${BLUE}→ Installing $TOOL_LABEL commands...${NC}"
 mkdir -p "$COMMANDS_DEST"
-for cmd in write-spec create-todos implement iterate code-review rollback scan-project; do
+for cmd in write-spec create-todos implement iterate code-review rollback scan-project improve-architecture; do
   cp "$WORKFLOW_DIR/commands/$cmd.md" "$COMMANDS_DEST/$cmd.md"
   echo "    ✓ ${CMD_PREFIX}${cmd}"
 done
@@ -169,6 +169,7 @@ echo -e "${YELLOW}Your 7 commands:${NC}"
 echo ""
 echo "  ${CMD_PREFIX}markd:write-spec → Start here. Describe a feature or fix."
 echo "  ${CMD_PREFIX}markd:create-todos → Plan phases and generate a TDD-ordered todo list."
+echo "  ${CMD_PREFIX}markd:improve-architecture → Surface shallow modules and design deepening refactors."
 echo "  ${CMD_PREFIX}markd:implement → Build it. Todos get checked off as you go."
 echo "  ${CMD_PREFIX}markd:iterate → Request changes to an in-progress spec."
 echo "  ${CMD_PREFIX}markd:code-review → Review all changes before committing."

@@ -17,6 +17,7 @@ Supports **Claude Code**, **Cursor**, and **OpenCode**.
 | `/markd:code-review` | Review changes before commit |
 | `/markd:rollback` | Abort and restore working tree |
 | `/markd:scan-project` | Scan repo; seed or refresh project docs (`docs/`) |
+| `/markd:improve-architecture` | Surface shallow modules and design deepening refactors |
 
 ---
 
