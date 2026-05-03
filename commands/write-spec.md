@@ -162,39 +162,6 @@ Once all questions are answered:
 
 ---
 
-## Step 4 — Write to Docs (if available)
-
-If `docs/` does **not** exist at the project root, skip this step.
-
-If it exists:
-
-1. **Detect layout:**
-   - **Monorepo** — `apps/` exists at project root → feature notes live at `docs/apps/[app]/features/[module].md`
-   - **Single-app** — no `apps/` directory → feature notes live at `docs/features/[module].md`
-
-2. **Auto-assign the spec to a module.** Compare the spec's description and affected areas against each existing feature note's **Role** and **Current capabilities**. Pick the best-matching note. If no note fits, create a new one using the spec's domain as the filename (kebab-case, e.g. `auth.md`, `notifications.md`).
-
-3. **If creating a new feature note**, use the format from `docs/.templates/feature.md`. Populate:
-   - `## Role` — one sentence from the spec's Overview
-   - `## Current capabilities` — `- [ ]` line(s) for what this spec will build
-   - `## Related specs` — the spec folder name
-   - Omit sections not relevant to this app type (e.g. omit `## Endpoints` for Web features)
-   - Set status tag to `#backlog`
-
-4. **If updating an existing feature note:**
-   - Add `- [ ]` line(s) to **Current capabilities** for what this spec will build
-   - Append the spec folder name to **Related specs**
-   - Add any items from **Out of Scope** or **Open Questions** as `- [ ]` capabilities if they represent known future work
-
-5. **Update `docs/overview.md`:**
-   - If it does not exist, create it using the format from `docs/.templates/overview.md`
-   - If it exists and this is a new module, add a wikilink line in the appropriate section (Apps or Modules)
-   - If this module already has a line, leave its status tag unchanged
-
-6. **Confirm:** Include in the user output: `Docs updated: docs/[path]/[module].md`
-
----
-
 ## When Revising an Existing Spec
 
 If the user provides a spec folder name or describes changes to an existing spec:

@@ -295,11 +295,11 @@ No config file needed. Run `/markd:scan-project` once to generate `docs/` from y
 
 | Command | Reads `docs/` | Writes `docs/` |
 |---------|--------------|----------------|
-| `write-spec` | Reads all feature notes + `conventions.md` for context before asking questions | Creates or updates the feature note; adds `- [ ]` capability lines |
-| `create-todos` | — | Updates the feature note's capabilities to reflect confirmed scope |
+| `write-spec` | Reads all feature notes + `conventions.md` for context before asking questions | — |
+| `create-todos` | — | — |
 | `improve-architecture` | Reads `architecture.md` + `conventions.md` for domain context | Updates `conventions.md` with new terms; records decisions in `architecture.md` |
-| `implement` | — | Marks capabilities `- [x]`, updates endpoints on completion |
-| `iterate` | — | Updates Role + adds new capability lines |
+| `implement` | — | Creates or updates the feature note; populates all sections from the spec; marks capabilities `- [x]`; updates endpoints |
+| `iterate` | — | — |
 | `code-review` | — | Updates status tag to `#done` |
 | `scan-project` | Existing notes (merge) | (Re)builds all docs from a codebase scan |
 

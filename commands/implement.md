@@ -210,11 +210,39 @@ When all items in `todos.md` are checked (flat) or all phases are complete (phas
 
    If `docs/` exists at the project root, then:
 
-   1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`.
-   2. In **Current capabilities**, mark the `- [ ]` lines added by this spec as `- [x]`.
-   3. **Overwrite** the **Endpoints** section (API features only) with the complete current endpoint list for this module.
-   4. Update the module's status tag to `#done` if all capability lines are now `- [x]`. If some `- [ ]` lines remain (from other specs), leave the tag as `#in-progress`.
-   5. Update the matching line in `docs/overview.md` to match the module's new status tag.
+   **Detect layout:**
+   - **Monorepo** — `apps/` exists at project root → feature notes live at `docs/apps/[app]/features/[module].md`
+   - **Single-app** — no `apps/` directory → feature notes live at `docs/features/[module].md`
+
+   **Find or create the feature note:**
+   - Search for the spec's folder name in the **Related specs** section of each note under `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`
+   - If no note references this spec, auto-assign by comparing the spec's description and **Affected Areas** against each note's **Role** and **Current capabilities** — pick the best match
+   - If no match exists, create a new note using the spec's domain as the filename (kebab-case, e.g. `auth.md`, `notifications.md`). Use the format from `docs/.templates/feature.md`
+
+   **If creating a new feature note**, populate all sections from the now-implemented spec:
+   - `## Role` — one sentence from the spec's Overview
+   - `## User Story` — _"As a [user type], I want to [action], so that [benefit]."_ Derived from the spec's Overview and Goals. One story per user type if multiple.
+   - `## User Flow` — numbered steps derived from the spec's Acceptance Criteria:
+     - **Web**: what the user does and sees at each step
+     - **API**: request/response cycle steps
+     - **Package**: how a consumer imports and uses it
+   - `## Current capabilities` — all spec capabilities marked `- [x]` (they are now implemented)
+   - `## Related specs` — the spec folder name
+   - `## Endpoints` (API features only) — the complete endpoint list from what was just implemented
+   - Omit sections not relevant to this app type
+   - Set status tag to `#done`
+
+   **If updating an existing feature note:**
+   1. Mark the `- [ ]` capability lines added by this spec as `- [x]`
+   2. If **User Story** or **User Flow** is missing or a stub, populate from the spec
+   3. **Overwrite** the **Endpoints** section (API features only) with the complete current endpoint list
+   4. Append the spec folder name to **Related specs** if not already present
+   5. Update the module's status tag to `#done` if all capability lines are now `- [x]`; leave as `#in-progress` if any `- [ ]` lines remain from other specs
+
+   **Update `docs/overview.md`:**
+   - If it does not exist, create it using the format from `docs/.templates/overview.md`
+   - If it exists and this is a new module, add a wikilink line in the appropriate section (Apps or Modules)
+   - Update the module's line to match its new status tag
 
    Include in the output: `Docs updated: docs/[path]/[module].md`
 

@@ -215,6 +215,15 @@ Use the exact format from `docs/.templates/feature.md`. Adapt per context:
 ## Role
 [One sentence: what this feature does in this app]
 
+## User Story
+As a [user type], I want to [action], so that [benefit].
+
+## User Flow
+1. [Step 1 — e.g. User navigates to ...]
+2. [Step 2 — e.g. User sees ...]
+3. [Step 3 — e.g. User submits / receives ...]
+[API features: describe the request/response flow instead of UI steps]
+
 ## Depends On
 - [[apps/[other-app]/features/[feature]]] — [why]
 - [[packages/api-contracts]] — [why]
@@ -254,6 +263,14 @@ Use the exact format from `docs/.templates/feature.md`. Adapt per context:
 
 #module #[feature-slug] #[status-tag]
 ```
+
+### User Story and User Flow rules
+- **User Story**: infer from routes, page names, and observable behavior in code. Format: _"As a [user type], I want to [action], so that [benefit]."_ If the feature serves multiple user types, write one story per type.
+- **User Flow** (Web features): numbered steps describing what the user does and sees. Infer from page structure, form handlers, and loading/error/success states found in code.
+- **User Flow** (API features): numbered steps describing the request/response cycle (e.g. "1. Caller sends POST /orders with payload. 2. API validates and creates the order. 3. API returns 201 with the created order.").
+- **User Flow** (packages): describe the integration flow — how a consumer imports and uses the package.
+- If User Story or User Flow cannot be reliably inferred, write a short placeholder and note it: _"(inferred — verify)"_
+- When **updating** an existing note: preserve any user-written User Story/User Flow. Only overwrite if the section is a stub or the routes/behavior have clearly changed.
 
 ### Current capabilities rules
 - Every **observed** capability in code → `- [x]` with short, product-oriented wording (not file names).

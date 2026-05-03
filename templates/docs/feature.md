@@ -3,6 +3,14 @@
 ## Role
 [One sentence: what this feature does in this app]
 
+## User Story
+As a [user type], I want to [action], so that [benefit].
+
+## User Flow
+1. [Step 1 — e.g. User navigates to ...]
+2. [Step 2 — e.g. User sees ...]
+3. [Step 3 — e.g. User submits ...]
+
 ## Depends On
 - [[apps/[other-app]/features/[feature]]] — [why]
 - [[packages/api-contracts]] — [why]

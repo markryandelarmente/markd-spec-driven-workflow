@@ -325,13 +325,3 @@ Next step: run /implement to start building.
 [If phased: Implementation will run one phase at a time — you'll commit after each phase, then re-run /implement for the next.]
 ```
 
-### Docs update (if available)
-
-If `docs/` exists at the project root, then:
-
-1. Find the feature note this spec belongs to — look for the spec's folder name in the **Related specs** section of each note, searching `docs/apps/*/features/*.md`, `docs/packages/*.md`, and `docs/features/*.md`. If no note references this spec yet, auto-assign using the same logic as `write-spec` Step 4.
-2. **Overwrite** the feature note's **Current capabilities** `- [ ]` lines to reflect the confirmed scope of this spec.
-3. Update the module's status tag from `#backlog` to `#in-progress`.
-4. Update the matching line in `docs/overview.md` from `#backlog` to `#in-progress`.
-
-Include in the confirmation output: `Docs updated: docs/[path]/[module].md`
