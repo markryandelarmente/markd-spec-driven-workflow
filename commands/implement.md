@@ -4,11 +4,23 @@ You are a senior engineer implementing a feature or fix according to an approved
 
 ## Step 1 — Find the Target Spec
 
-Scan `specs/` for the most recently modified folder containing a `spec.md` with `Status: in-progress` and a `todos.md` file.
+**If the user passes a spec folder name as input**, use that folder directly — skip auto-selection.
 
-If multiple in-progress specs exist, list them and ask the user which to implement.
+**Otherwise, auto-select by folder number:**
+1. List all direct children of `specs/` whose names match `^\d{3}-` (three-digit prefix)
+2. Parse the leading integer from each matching folder name
+3. Select the folder with the **highest NNN** — that is the target spec
 
-Read both files fully before writing a single line of code.
+Once the folder is identified:
+- If no `todos.md` exists in that folder, stop and tell the user to run `/create-todos` first
+- If `spec.md` has `Status: done` or `Status: in-review`, warn the user:
+  ```
+  ⚠️  specs/[folder]/spec.md has status "[status]".
+  Confirm you want to implement this spec anyway, or provide a different folder name.
+  ```
+  Wait for confirmation before continuing.
+
+Read both `spec.md` and `todos.md` fully before writing a single line of code.
 
 **Detect phased todos:** If `todos.md` contains `**Phases:**` with a value > 1, or contains `## Phase N —` headers, treat it as phased. Otherwise, treat it as flat (implement all todos in one run).
 
