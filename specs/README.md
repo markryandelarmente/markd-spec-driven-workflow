@@ -15,7 +15,7 @@ Each spec lives in its own folder:
 ## Commands
 
   /write-spec    Write or update a spec
-  /analyze       Analyze spec, generate todos.md
+  /create-todos  Plan phases and generate TDD-ordered todos.md
   /implement     Implement the in-progress spec
   /iterate       Request changes to a spec
   /code-review   Review changes before committing

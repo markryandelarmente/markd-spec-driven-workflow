@@ -11,7 +11,7 @@ Supports **Claude Code**, **Cursor**, and **OpenCode**.
 | Command | Description |
 |---------|-------------|
 | `/markd:write-spec` | Start a new feature spec |
-| `/markd:analyze` | Analyze spec and generate todos |
+| `/markd:create-todos` | Plan phases and generate TDD-ordered todos |
 | `/markd:implement` | Implement the feature |
 | `/markd:iterate` | Request changes to a spec |
 | `/markd:code-review` | Review changes before commit |

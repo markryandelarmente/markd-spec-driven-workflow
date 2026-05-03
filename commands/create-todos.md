@@ -1,4 +1,4 @@
-You are a senior engineer performing a thorough technical analysis of a spec before implementation begins.
+You are a senior engineer planning how the spec will be implemented — dividing work into phases and generating a TDD-ordered todo list.
 
 ---
 
@@ -24,7 +24,7 @@ Standards will not be applied. Consider adding rules (e.g., AGENTS.md or .cursor
 
 Then find the target spec. Look inside the `specs/` folder for the **most recently created** spec folder whose `spec.md` has `Status: backlog`.
 
-If multiple backlog specs exist, list them and ask the user which one to analyze.
+If multiple backlog specs exist, list them and ask the user which one to use.
 
 Read:
 - Project rules (already loaded above)
@@ -43,23 +43,43 @@ Before doing anything else, check that the spec is complete enough to act on. Ve
 | **Scope — In Scope** | At least 1 item (not blank or "TBD") |
 | **Technical Design — Affected Areas** | At least 1 file or module identified |
 
-**If any required section is empty or incomplete — stop immediately.** Do not proceed to analysis. Tell the user exactly which sections need to be filled out and why, then exit.
+**If any required section is empty or incomplete — stop immediately.** Do not proceed. Tell the user exactly which sections need to be filled out and why, then exit.
 
 ```
-❌ Spec is incomplete. Cannot analyze.
+❌ Spec is incomplete. Cannot create todos.
 
 Missing or empty sections:
   - Acceptance Criteria: no criteria defined
   - Affected Areas: no files or modules listed
 
-Please fill these out in specs/[folder]/spec.md and re-run /analyze.
+Please fill these out in specs/[folder]/spec.md and re-run /create-todos.
 ```
 
 Only continue to Step 3 once all required sections pass validation.
 
 ---
 
-## Step 3 — Update Status
+## Step 3 — Assess Complexity and Plan Phases
+
+Before touching the codebase, assess the implementation complexity of the spec:
+
+| Complexity | Criteria | Behavior |
+|------------|----------|----------|
+| **Simple** | Single focus, few ACs (e.g., "add a button", "fix typo"), 1–2 affected areas | No phases; flat todos |
+| **Moderate** | 2–3 distinct flows, several ACs (e.g., "list + create for one entity") | Optional: 1–2 phases |
+| **Complex** | Full CRUD, multiple entities, many ACs (6+), multiple UI flows | **Phased** — group into deliverable phases |
+
+**Heuristics for "complex":**
+- Full CRUD patterns (List + Create + Edit + Delete)
+- Multiple distinct screens or flows
+- 6+ acceptance criteria
+- Many affected areas (5+ files/modules)
+
+Store your assessment; it will be written into `todos.md` and determines the todo structure (flat vs phased).
+
+---
+
+## Step 4 — Update Status
 
 In `spec.md`, change:
 ```
@@ -72,7 +92,7 @@ to:
 
 ---
 
-## Step 4 — Analyze the Codebase
+## Step 5 — Analyze the Codebase
 
 Scan the relevant parts of the codebase to answer:
 
@@ -88,37 +108,17 @@ Scan the relevant parts of the codebase to answer:
 
 ---
 
-## Step 5b — Assess Complexity
-
-Before generating todos, assess the implementation complexity of the spec:
-
-| Complexity | Criteria | Behavior |
-|------------|----------|----------|
-| **Simple** | Single focus, few ACs (e.g., "add a button", "fix typo"), 1–2 affected areas | No phases; flat todos like today |
-| **Moderate** | 2–3 distinct flows, several ACs (e.g., "list + create for one entity") | Optional: 1–2 phases |
-| **Complex** | Full CRUD, multiple entities, many ACs (6+), multiple UI flows | **Phased** — group into deliverable phases |
-
-**Heuristics for "complex":**
-- Full CRUD patterns (List + Create + Edit + Delete)
-- Multiple distinct screens or flows
-- 6+ acceptance criteria
-- Many affected areas (5+ files/modules)
-
-Store your assessment; it will be written into `todos.md` and determines the todo structure (flat vs phased).
-
----
-
-## Step 5 — Ask Clarifications (technical blockers only, if needed)
+## Step 6 — Ask Clarifications (technical blockers only, if needed)
 
 Feature requirements were already resolved during `/write-spec`. **Do NOT re-ask questions already answered in the spec.**
 
-Only ask here if codebase analysis (Step 4) revealed a **genuine technical blocker or contradiction** — for example:
+Only ask here if codebase analysis (Step 5) revealed a **genuine technical blocker or contradiction** — for example:
 - A schema constraint or existing migration that makes an acceptance criterion impossible as written
 - An API contract that existing consumers depend on, which this spec would break
 - A missing environment variable or third-party dependency with no clear resolution path
 - A direct conflict between two acceptance criteria
 
-If no such blockers exist, skip this step entirely and proceed to Step 6.
+If no such blockers exist, skip this step entirely and proceed to Step 7.
 
 If a blocker does exist, ask about it one at a time using this format. **You MUST mark exactly one option as recommended** (append `← recommended — [short reason]` to that line):
 
@@ -135,13 +135,15 @@ If a blocker does exist, ask about it one at a time using this format. **You MUS
 
 ---
 
-Wait for the user to reply before asking the next question. Once all blockers are resolved, proceed to Step 6.
+Wait for the user to reply before asking the next question. Once all blockers are resolved, proceed to Step 7.
 
 ---
 
-## Step 6 — Generate `todos.md`
+## Step 7 — Generate `todos.md`
 
-Create `specs/[folder]/todos.md`. The structure depends on the complexity assessed in Step 5b.
+Create `specs/[folder]/todos.md`. The structure depends on the complexity assessed in Step 3.
+
+Todos follow a **vertical-slice, TDD ordering**: each behavior unit has its failing test listed before its implementation (RED → GREEN). Do not group all tests at the bottom.
 
 **For Simple or Moderate (flat structure):**
 
@@ -170,24 +172,17 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 ---
 
-## Backend
+## [Behavior 1 — e.g., "User can log in with valid credentials"]
 > Covers: AC1 — [acceptance criterion text]
 
-- [ ] [Specific task — e.g., "Create migration for users table: add `oauth_provider` column"]
-- [ ] [Task]
-- [ ] [Task]
+- [ ] [RED] Write failing test: [behavior description using public interface — e.g., "POST /api/auth/login returns 200 and token for valid credentials"]
+- [ ] [GREEN] Implement: [what to build to pass the test — e.g., "Create POST /api/auth/login endpoint in app/api/auth/route.ts"]
 
-## Frontend
+## [Behavior 2 — e.g., "Invalid credentials return 401"]
 > Covers: AC2 — [acceptance criterion text]
 
-- [ ] [Specific task — e.g., "Create `LoginForm` component in `components/auth/`"]
-- [ ] [Task]
-
-## Tests
-> Covers: AC1, AC2 — all criteria must have test coverage
-
-- [ ] [Unit test task]
-- [ ] [Integration test task]
+- [ ] [RED] Write failing test: [behavior description]
+- [ ] [GREEN] Implement: [what to build]
 
 ## Infrastructure / Config
 
@@ -199,8 +194,8 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 | Criterion | Covered by |
 |-----------|------------|
-| AC1 — [criterion text] | Backend > [task name] |
-| AC2 — [criterion text] | Frontend > [task name] |
+| AC1 — [criterion text] | Behavior 1 |
+| AC2 — [criterion text] | Behavior 2 |
 
 ---
 
@@ -231,29 +226,22 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 ## Phase 1 — [Name, e.g., List]
 > Deliverable: [what this phase delivers]. Commit after this phase.
 
-### Backend
-- [ ] [Task]
-- [ ] [Task]
+### [Behavior 1 — e.g., "User can view list of items"]
+- [ ] [RED] Write failing test: [behavior description using public interface]
+- [ ] [GREEN] Implement: [what to build]
 
-### Frontend
-- [ ] [Task]
-
-### Tests
-- [ ] [Task]
+### [Behavior 2 — e.g., "Empty state shown when no items exist"]
+- [ ] [RED] Write failing test: [behavior description]
+- [ ] [GREEN] Implement: [what to build]
 
 ---
 
 ## Phase 2 — [Name, e.g., Create]
 > Deliverable: [what this phase delivers].
 
-### Backend
-- [ ] [Task]
-
-### Frontend
-- [ ] [Task]
-
-### Tests
-- [ ] [Task]
+### [Behavior 3 — e.g., "User can create a new item"]
+- [ ] [RED] Write failing test: [behavior description]
+- [ ] [GREEN] Implement: [what to build]
 
 ---
 
@@ -278,8 +266,8 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 | Criterion | Covered by |
 |-----------|------------|
-| AC1 — [criterion text] | Phase 1 > [task] |
-| AC2 — [criterion text] | Phase 2 > [task] |
+| AC1 — [criterion text] | Phase 1 > Behavior 1 |
+| AC2 — [criterion text] | Phase 2 > Behavior 3 |
 
 ---
 
@@ -296,21 +284,27 @@ Create `specs/[folder]/todos.md`. The structure depends on the complexity assess
 
 **Todo writing rules:**
 - Each todo must be **specific and actionable** — not "implement auth" but "create `POST /api/auth/login` endpoint in `app/api/auth/route.ts`"
-- Each group must include a `> Covers: ACN` note (flat) or map to phases in the Acceptance Criteria table (phased)
+- Each behavior section must include a `> Covers: ACN` note mapping it to an acceptance criterion
 - The Acceptance Criteria Coverage table must account for every criterion in the spec — no criterion left uncovered
-- Group by area: Backend, Frontend, Tests, Infrastructure
-- Order tasks so dependencies come first (e.g., DB migration before API, API before UI)
+- Order behavior units so dependencies come first (e.g., DB migration before API, API before UI)
 - Flag any high-risk tasks with ⚠️
 - **Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Extract them from the loaded project rules and match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards)
-- **For phased specs:** Each phase must be a deliverable unit (e.g., List = API + UI + tests for listing; Create = form + API + tests). Add `> Deliverable: [description]. Commit after this phase.` to Phase 1; subsequent phases get `> Deliverable: [description].` Phases are implemented one at a time — the dev commits after each phase before continuing
+- **For phased specs:** Each phase must be a deliverable unit (e.g., List = behaviors for listing; Create = behaviors for creation). Add `> Deliverable: [description]. Commit after this phase.` to Phase 1; subsequent phases get `> Deliverable: [description].` Phases are implemented one at a time — the dev commits after each phase before continuing
+
+**TDD rules:**
+- Tests verify behavior through **public interfaces only** — not implementation details. A test must survive internal refactors; if renaming an internal function breaks a test, that test is wrong
+- Each test task describes **what** the system does (e.g. "user can log in with valid credentials"), never **how** it does it
+- **No horizontal slicing** — do not write all [RED] tasks first then all [GREEN] tasks. Each behavior unit is its own RED → GREEN cycle
+- The **first behavior unit** in each phase (or in the file for flat specs) is the **tracer bullet**: the simplest failing test that proves the critical path works end-to-end
+- If a behavior cannot be tested through a public interface, reconsider the interface design before writing the todo
 
 ---
 
-## Step 7 — Confirm to User
+## Step 8 — Confirm to User
 
 Output a summary:
 ```
-✅ Analysis complete
+✅ Todos created
 
 Spec status → in-progress
 Todos file created: specs/[folder]/todos.md
@@ -324,10 +318,7 @@ Areas at risk:
 
 Todo breakdown:
   - Standards applied: X checks
-  - Backend: X tasks
-  - Frontend: X tasks
-  - Tests: X tasks
-  - Infrastructure: X tasks
+  - Behaviors: X (each with RED → GREEN tasks)
   [If phased: Phases: X (Phase 1: [name], Phase 2: [name], ...)]
 
 Next step: run /implement to start building.

@@ -1,4 +1,4 @@
-You are a senior engineer **reconciling a local codebase with project docs** so other workflow commands (`write-spec`, `analyze`, etc.) have accurate context. This is a **bootstrap / refresh** from code — not a spec, not implementation work.
+You are a senior engineer **reconciling a local codebase with project docs** so other workflow commands (`write-spec`, `create-todos`, etc.) have accurate context. This is a **bootstrap / refresh** from code — not a spec, not implementation work.
 
 ---
 

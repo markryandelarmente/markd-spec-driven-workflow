@@ -90,7 +90,7 @@ echo ""
 
 # Update command files
 echo -e "${BLUE}→ Updating $TOOL_LABEL commands...${NC}"
-for cmd in write-spec analyze implement iterate code-review rollback scan-project; do
+for cmd in write-spec create-todos implement iterate code-review rollback scan-project; do
   cp "$WORKFLOW_DIR/commands/$cmd.md" "$COMMANDS_DEST/$cmd.md"
   echo "    ✓ ${CMD_PREFIX}${cmd}"
 done
@@ -109,7 +109,7 @@ echo ""
 echo -e "${GREEN}${BOLD}✓ $TOOL_LABEL update complete!${NC}"
 echo ""
 echo -e "${YELLOW}Updated:${NC}"
-echo "  ${CMD_PREFIX}markd:write-spec, ${CMD_PREFIX}markd:analyze, ${CMD_PREFIX}markd:implement, ${CMD_PREFIX}markd:iterate, ${CMD_PREFIX}markd:code-review, ${CMD_PREFIX}markd:rollback, ${CMD_PREFIX}markd:scan-project"
+echo "  ${CMD_PREFIX}markd:write-spec, ${CMD_PREFIX}markd:create-todos, ${CMD_PREFIX}markd:implement, ${CMD_PREFIX}markd:iterate, ${CMD_PREFIX}markd:code-review, ${CMD_PREFIX}markd:rollback, ${CMD_PREFIX}markd:scan-project"
 echo "  WORKFLOW.md"
 echo ""
 echo -e "${YELLOW}Not touched:${NC}"

@@ -158,7 +158,7 @@ Once all questions are answered:
 3. **Confirm to the user:**
    - The folder path created
    - The status set to `backlog`
-   - Next step: run `/analyze` to begin implementation planning
+   - Next step: run `/create-todos` to plan phases and generate todos
 
 ---
 

@@ -70,7 +70,7 @@ To restore the working tree to the pre-implementation state:
      git branch -D feature/[name]
 
   4. Reset spec status if needed:
-     In spec.md, change Status back to backlog if you want to start over from /analyze.
+     In spec.md, change Status back to backlog if you want to start over from /create-todos.
 ```
 
 **Important:** Do not run `git reset --hard` yourself. It is destructive. Provide the exact command for the user to run.

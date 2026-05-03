@@ -14,9 +14,9 @@ Clone this repo once, then run the installer from inside any project:
 cd ~/my-project
 
 sh ~/workflow/install.sh           # defaults to Claude Code
-sh ~/workflow/install.sh --claude  # Claude Code  (/markd:write-spec, /markd:analyze, ...)
-sh ~/workflow/install.sh --cursor  # Cursor        (@markd:write-spec, @markd:analyze, ...)
-sh ~/workflow/install.sh --opencode # OpenCode      (/markd:write-spec, /markd:analyze, ...)
+sh ~/workflow/install.sh --claude  # Claude Code  (/markd:write-spec, /markd:create-todos, ...)
+sh ~/workflow/install.sh --cursor  # Cursor        (@markd:write-spec, @markd:create-todos, ...)
+sh ~/workflow/install.sh --opencode # OpenCode      (/markd:write-spec, /markd:create-todos, ...)
 ```
 
 The installer copies the command files and the `specs/` scaffolding into your project.
@@ -57,8 +57,8 @@ Call this again on an existing spec to revise it — only changed sections are u
 
 ---
 
-### `analyze`
-**Plan the work.** The AI analyzes the spec against your real codebase.
+### `create-todos`
+**Plan the work.** The AI plans how the spec will be implemented — dividing work into phases and generating a TDD-ordered todo list.
 
 The AI will:
 - Load project rules from Cursor, Claude Code, and OpenCode locations (`.cursor/rules/`, `.claude/rules/`, `AGENTS.md`, `CLAUDE.md`)
@@ -67,8 +67,8 @@ The AI will:
 - Set spec status to `in-progress`
 - Identify files to create and modify
 - Flag any areas at risk of breaking
-- Ask clarifications if the spec has gaps
-- Generate `specs/[folder]/todos.md` — an ordered, grouped checklist (phased for complex specs)
+- Ask clarifications only for genuine technical blockers found in the codebase
+- Generate `specs/[folder]/todos.md` — a TDD-ordered checklist (RED → GREEN per behavior, phased for complex specs)
 
 ---
 
@@ -141,10 +141,10 @@ Use once when adopting the workflow on a **brownfield** project, or anytime docs
 
 ## Phased Implementation
 
-For complex specs (e.g., full CRUD with list, create, edit, delete), `/analyze` assesses size and complexity and groups tasks into phases. Each phase is a deliverable unit (e.g., Phase 1: list page + API + tests).
+For complex specs (e.g., full CRUD with list, create, edit, delete), `/create-todos` assesses size and complexity and groups tasks into phases. Each phase is a deliverable unit (e.g., Phase 1: list page + behaviors + tests).
 
 **Flow for phased specs:**
-1. `/analyze` — generates phased `todos.md` (Phase 1, Phase 2, ...)
+1. `/create-todos` — generates phased `todos.md` (Phase 1, Phase 2, ...)
 2. `/implement` — implements Phase 1 only, runs lint/build/test, then stops
 3. You manually verify the deliverable works
 4. You commit your changes
@@ -164,8 +164,8 @@ backlog → in-progress → in-review → done
 
 | Status | Set by | Meaning |
 |--------|--------|---------|
-| `backlog` | `write-spec` | Spec written, not yet analyzed |
-| `in-progress` | `analyze` | Analyzed, ready to implement |
+| `backlog` | `write-spec` | Spec written, todos not yet created |
+| `in-progress` | `create-todos` | Todos created, ready to implement |
 | `in-review` | `code-review` | Implementation done, under review |
 | `done` | `code-review` | Reviewed, committed |
 
@@ -177,7 +177,7 @@ backlog → in-progress → in-review → done
 spec-driven-workflow-v2/      ← this repo (install source)
   commands/
     write-spec.md             ← single source for all commands
-    analyze.md
+    create-todos.md
     implement.md
     iterate.md
     code-review.md
@@ -236,8 +236,8 @@ your-project/                 ← after install
 # 2. AI asks questions one at a time, you answer, spec.md is created
 #    specs/001-feat-oauth-login/spec.md  (status: backlog)
 
-# 3. Analyze the spec against the codebase
-/markd:analyze  →  todos.md created, spec → in-progress
+# 3. Plan phases and create todos
+/markd:create-todos  →  todos.md created, spec → in-progress
 
 # 4. Implement
 /markd:implement  →  branch created, todos checked off one by one
@@ -253,7 +253,7 @@ your-project/                 ← after install
 
 ## Project Rules
 
-The `analyze` command loads project standards from agent-specific locations (Cursor, Claude Code, OpenCode). Add rules in one or more of:
+The `create-todos` command loads project standards from agent-specific locations (Cursor, Claude Code, OpenCode). Add rules in one or more of:
 
 - **`AGENTS.md`** (project root) — Cursor, OpenCode
 - **`.cursor/rules/`** — Cursor (`.mdc` or `.md` files; strip frontmatter from `.mdc`)
@@ -280,7 +280,7 @@ No config file needed. Run `/markd:scan-project` once to generate `docs/` from y
 | Command | Reads `docs/` | Writes `docs/` |
 |---------|--------------|----------------|
 | `write-spec` | Reads all feature notes + `conventions.md` for context before asking questions | Creates or updates the feature note; adds `- [ ]` capability lines |
-| `analyze` | — | Updates the feature note's capabilities to reflect confirmed scope |
+| `create-todos` | — | Updates the feature note's capabilities to reflect confirmed scope |
 | `implement` | — | Marks capabilities `- [x]`, updates endpoints on completion |
 | `iterate` | — | Updates Role + adds new capability lines |
 | `code-review` | — | Updates status tag to `#done` |
