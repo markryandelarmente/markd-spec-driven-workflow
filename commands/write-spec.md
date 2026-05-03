@@ -43,20 +43,27 @@ Read the user's input carefully. Identify:
 
 ---
 
-## Step 2 — Ask Clarification Questions (One at a Time)
+## Step 2 — Grill the User (One Question at a Time)
 
-Internally identify all the clarifications needed, covering:
-- Scope boundaries (what's in/out)
-- Authentication / authorization requirements
-- Error states and failure handling
-- Data persistence and schema impact
-- UI/UX behavior (loading, empty, error states)
-- Mobile / responsive considerations
-- Performance constraints
-- Rollback / feature flag needs
-- Dependencies on other features or services
+Your goal is to leave **zero ambiguity** in the spec. Interview the user relentlessly about every aspect of this feature until you have a shared understanding of every significant decision. Walk down each branch of the decision tree, resolving dependencies between decisions one-by-one (e.g. data model before API shape, API shape before UI behavior).
 
-**Do NOT list all questions at once.** Ask them one at a time in a conversational way.
+**Before asking any question**, check whether it can be answered by exploring the codebase or `docs/` — if so, resolve it silently and move on.
+
+Internally map the full decision tree across these branches (in dependency order):
+1. Scope boundaries (what's in/out of this spec)
+2. Authentication / authorization requirements
+3. Data model and schema impact
+4. API shape and contract
+5. UI/UX behavior (loading, empty, error, success states)
+6. Mobile / responsive considerations
+7. Error states and failure handling
+8. Performance constraints
+9. Rollback / feature flag needs
+10. Dependencies on other features or services
+
+**Do NOT list all questions at once.** Ask them one at a time. Wait for the user to reply before asking the next question.
+
+**Do NOT move to Step 3** until every significant branch has been resolved or the user has explicitly deferred it.
 
 For each question, use this format. **You MUST mark exactly one option as recommended** (append `← recommended — [short reason]` to that line):
 
@@ -72,8 +79,6 @@ For each question, use this format. **You MUST mark exactly one option as recomm
 > Type A, B, C or your own answer.
 
 ---
-
-Wait for the user to reply before asking the next question. Once all questions are answered, proceed to Step 3.
 
 ---
 

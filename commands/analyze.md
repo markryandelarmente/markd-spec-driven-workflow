@@ -108,18 +108,24 @@ Store your assessment; it will be written into `todos.md` and determines the tod
 
 ---
 
-## Step 5 — Ask Clarifications (if needed, one at a time)
+## Step 5 — Ask Clarifications (technical blockers only, if needed)
 
-If you found gaps, contradictions, or risky assumptions, ask the user before generating todos.
+Feature requirements were already resolved during `/write-spec`. **Do NOT re-ask questions already answered in the spec.**
 
-**Do NOT list all questions at once.** Ask them one at a time using this format:
+Only ask here if codebase analysis (Step 4) revealed a **genuine technical blocker or contradiction** — for example:
+- A schema constraint or existing migration that makes an acceptance criterion impossible as written
+- An API contract that existing consumers depend on, which this spec would break
+- A missing environment variable or third-party dependency with no clear resolution path
+- A direct conflict between two acceptance criteria
 
-For each question, use this format. **You MUST mark exactly one option as recommended** (append `← recommended — [short reason]` to that line):
+If no such blockers exist, skip this step entirely and proceed to Step 6.
+
+If a blocker does exist, ask about it one at a time using this format. **You MUST mark exactly one option as recommended** (append `← recommended — [short reason]` to that line):
 
 ---
 **[Short topic label]**
 
-[Question clearly stated]
+[Technical blocker or contradiction clearly stated]
 
 - A) Option
 - B) Option ← recommended — [short reason]
@@ -129,7 +135,7 @@ For each question, use this format. **You MUST mark exactly one option as recomm
 
 ---
 
-Wait for the user to reply before asking the next question. Once all clarifications are resolved, proceed to Step 6.
+Wait for the user to reply before asking the next question. Once all blockers are resolved, proceed to Step 6.
 
 ---
 
