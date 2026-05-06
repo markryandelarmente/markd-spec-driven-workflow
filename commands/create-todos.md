@@ -13,12 +13,13 @@ Check in order, load all that exist:
 4. **`AGENTS.md`** (project root) — Read this file
 5. **`CLAUDE.md`** (project root) or **`.claude/CLAUDE.md`** — Read whichever exists
 6. **`.cursorrules`** (project root) — Read this file
+7. **Sub-app `AGENTS.md` files** — If an `apps/` directory exists at the project root, list its direct children and read `AGENTS.md` from each sub-app folder that has one (e.g. `apps/web/AGENTS.md`, `apps/api/AGENTS.md`). Rules from a sub-app override the root `AGENTS.md` where they conflict — the sub-app's rules take precedence for work scoped to that app.
 
 Combine all found content. The combined rules are the project standards for this analysis.
 
 **Only if every read attempt fails or returns "file not found"** — then warn:
 ```
-⚠️  No project rules found. Checked: .cursor/rules/, .claude/rules/, AGENTS.md, CLAUDE.md, .cursorrules
+⚠️  No project rules found. Checked: .cursor/rules/, .claude/rules/, AGENTS.md, CLAUDE.md, .cursorrules, apps/*/AGENTS.md
 Standards will not be applied. Consider adding rules (e.g., AGENTS.md or .cursor/rules/) for consistent AI guidance.
 ```
 
@@ -164,7 +165,7 @@ Todos follow a **vertical-slice, TDD ordering**: each behavior unit has its fail
 ---
 
 ## 📋 Standards Applied
-> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md) relevant to this feature
+> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md, apps/*/AGENTS.md) relevant to this feature. Sub-app AGENTS.md rules take precedence over root rules where they conflict.
 
 - [ ] [Standard from project rules that applies — e.g., "All API routes validate and sanitize input"]
 - [ ] [Standard — e.g., "No `any` types — use `unknown` and narrow"]
@@ -255,7 +256,7 @@ Todos follow a **vertical-slice, TDD ordering**: each behavior unit has its fail
 ---
 
 ## 📋 Standards Applied
-> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md) relevant to this feature
+> Standards from project rules (.cursor/rules, .claude/rules, AGENTS.md, CLAUDE.md, apps/*/AGENTS.md) relevant to this feature. Sub-app AGENTS.md rules take precedence over root rules where they conflict.
 
 - [ ] [Standard]
 - [ ] [Standard]
@@ -288,7 +289,7 @@ Todos follow a **vertical-slice, TDD ordering**: each behavior unit has its fail
 - The Acceptance Criteria Coverage table must account for every criterion in the spec — no criterion left uncovered
 - Order behavior units so dependencies come first (e.g., DB migration before API, API before UI)
 - Flag any high-risk tasks with ⚠️
-- **Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Extract them from the loaded project rules and match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards)
+- **Standards Applied** section must only include standards genuinely relevant to this specific feature — do not copy all standards blindly. Extract them from the loaded project rules (including any sub-app `AGENTS.md` for the app being modified) and match them to the type of work being done (e.g., API work → API standards, UI work → accessibility + component standards). When a sub-app rule conflicts with a root rule, use the sub-app rule
 - **For phased specs:** Each phase must be a deliverable unit (e.g., List = behaviors for listing; Create = behaviors for creation). Add `> Deliverable: [description]. Commit after this phase.` to Phase 1; subsequent phases get `> Deliverable: [description].` Phases are implemented one at a time — the dev commits after each phase before continuing
 
 **TDD rules:**
