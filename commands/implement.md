@@ -85,7 +85,7 @@ Then revert `spec.md` status back to `backlog` and advise the user to address th
 
 **If phased:** Work only on the **first incomplete phase**. A phase is the content from `## Phase N — [Name]` through the next `## Phase` or `## ⚠️ Risk Areas` (whichever comes first). A phase is incomplete if any todo within it is unchecked. Do not work on tasks in later phases until the current phase is done and the user has committed.
 
-**If flat:** Work through `todos.md` **in order**, top to bottom, respecting the dependency sequence.
+**If flat:** Treat the entire `todos.md` as a single phase for the two-pass cycle below.
 
 ### Rules
 - Implement **exactly what the spec describes** — nothing more, nothing less
@@ -103,11 +103,23 @@ Update `todos.md` — mark the item as checked:
 
 Do this after **each individual task**, not in bulk at the end.
 
-### After all todos in scope are checked off
+---
 
-**Phased:** "In scope" = the current phase only. **Flat:** "In scope" = all todos.
+### Two-Pass TDD Cycle
 
-**Detect the package manager first:**
+Each phase (or the full todo list for flat specs) is implemented in two passes. **Determine which pass to run** by inspecting the current phase's todos:
+
+| State | Action |
+|-------|--------|
+| Any `[RED]` todos are unchecked | Run **Pass 1 — RED** |
+| All `[RED]` todos are checked, any `[GREEN]` todos are unchecked | Run **Pass 2 — GREEN** |
+| All todos in phase are checked | Phase is already done — proceed to next phase or Step 4 |
+
+---
+
+### Pass 1 — RED (write all failing tests)
+
+**Detect the package manager first** (needed for the test run below):
 
 Check the project root for lock files in this order:
 ```
@@ -115,13 +127,41 @@ pnpm-lock.yaml    → use pnpm
 yarn.lock         → use yarn
 package-lock.json → use npm
 ```
-If none are found, check `package.json` for a `packageManager` field as a fallback. Use whichever is detected for all commands below.
+If none are found, check `package.json` for a `packageManager` field as a fallback. Also read `package.json` `scripts` to confirm the exact test script name (e.g. `test:unit` instead of `test`).
 
-Also read `package.json` `scripts` to confirm the exact script names exist before running. If a script is named differently (e.g. `typecheck` instead of `build`, `test:unit` instead of `test`), use the correct name.
+1. Collect every unchecked `[RED]` todo in the current phase. Do **not** touch any `[GREEN]` task or any implementation code yet.
+2. Write all test files for the phase — one behavior at a time, marking each `[RED]` todo as `[x]` in `todos.md` immediately after its test is written.
+3. Run the test suite:
+   ```bash
+   pnpm test / yarn test / npm run test
+   ```
+4. Confirm that **all newly written tests fail** as expected (RED state).
+   - If a new test passes immediately, it is likely vacuous or mis-targeted — flag it to the user and ask how to proceed before continuing.
+   - Pre-existing passing tests must still pass; if any break, fix the test file before proceeding.
+5. Stop and output:
+   ```
+   🔴 RED pass complete — Phase [N] ([phase name]) tests written and failing as expected.
+
+   Tests written:
+     [list each test file path]
+
+   Commit the tests now:
+     git add [test file paths]
+     git commit -m "test: phase [N] [phase name] failing tests"
+
+   Run /implement again to begin implementation.
+   ```
+6. **Stop.** Do not write any implementation code. Wait for the user to commit and re-run `/implement`.
 
 ---
 
-Run all three gates in order. Do not proceed to Step 4 until all are green.
+### Pass 2 — GREEN (implement to pass the tests)
+
+All `[RED]` todos are already checked. Implement every unchecked `[GREEN]` task in dependency order, marking each `[x]` in `todos.md` immediately after completion.
+
+**Detect the package manager** (same logic as Pass 1 if not already detected).
+
+After all `[GREEN]` todos in the phase are checked, run all three gates in order:
 
 **1. Lint — fix all issues:**
 ```bash
@@ -141,7 +181,8 @@ pnpm build / yarn build / npm run build
 ```bash
 pnpm test / yarn test / npm run test
 ```
-- Fix any failing tests (fix the implementation, not the test, unless the test itself is wrong)
+- All tests — including the tests written in Pass 1 — must now pass
+- Fix any failing tests by fixing the **implementation**, not the test, unless the test itself is demonstrably wrong
 - Re-run until all tests pass
 
 If any gate fails, fix it and re-run that gate before moving on to the next.
@@ -151,7 +192,7 @@ If any gate fails, fix it and re-run that gate before moving on to the next.
 - Do NOT proceed to Step 4
 - Output instead:
   ```
-  ✅ Phase [N] complete
+  ✅ Phase [N] complete — all tests passing.
 
   Branch: feature/[name]
   Phase [N] todos: X/X checked
@@ -161,10 +202,11 @@ If any gate fails, fix it and re-run that gate before moving on to the next.
     ✅ Build  — no compile errors
     ✅ Tests  — X/X passing
 
-  Next steps:
-    1. Manually verify the deliverable for this phase works
-    2. Commit your changes: git add ... && git commit -m "..."
-    3. Run /implement again to start Phase [N+1]
+  Commit the implementation now:
+    git add .
+    git commit -m "feat: implement phase [N] [phase name]"
+
+  Run /implement to start Phase [N+1].
   ```
 - Stop. The user will commit and re-run `/implement` for the next phase.
 
